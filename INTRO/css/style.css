@@ -1,0 +1,169 @@
+@font-face {
+    font-family: 'MaplestoryBold';
+    src: url('../assets/Maplestory Bold.ttf') format('truetype');
+}
+
+:root {
+    --primary-color: #ff4757;
+    --background-dark: #000000;
+    --text-white: #ffffff;
+    --overlay-color: rgba(0, 0, 0, 0.4);
+    
+    /* Button Animation Variables - Configured via JS */
+    --float-distance: 20px;
+    --float-duration: 2s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--background-dark);
+    font-family: 'MaplestoryBold', 'Noto Sans KR', sans-serif;
+    color: var(--text-white);
+}
+
+input, textarea, button {
+    font-family: 'MaplestoryBold', 'Noto Sans KR', sans-serif;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Scene Container */
+.scene {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease-in-out, visibility 1s;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.scene.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Gray Overlay for better text visibility */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 20%, var(--overlay-color) 100%);
+    pointer-events: none;
+}
+
+/* Floating Button */
+.btn-floating {
+    position: absolute;
+    bottom: 15%;
+    padding: 18px 40px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, var(--primary-color), #ff6b81);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(255, 71, 87, 0.4);
+    animation: float var(--float-duration) ease-in-out infinite;
+    transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    z-index: 10;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-floating:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 15px 30px rgba(255, 71, 87, 0.6);
+    filter: brightness(1.1);
+}
+
+.btn-floating:active {
+    transform: scale(0.95);
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(calc(-1 * var(--float-distance))); }
+    100% { transform: translateY(0); }
+}
+
+/* Text Content for Scene 7 */
+.scene-text {
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    animation: fadeIn 1.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hidden elements */
+.hidden {
+    display: none;
+}
+
+/* Editor Styles - Lightweight inside style.css or separate? 
+   Let's keep it simple and add a bit here */
+.editor-container {
+    height: 100vh;
+    overflow-y: auto;
+    background: #1a1a1a;
+    padding: 40px;
+}
+
+.editor-card {
+    background: #2d2d2d;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    border-left: 5px solid var(--primary-color);
+}
+
+/* Subtitle Style */
+.subtitle {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    text-align: center;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 12px 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    z-index: 5;
+    pointer-events: none;
+    line-height: 1.4;
+    word-break: keep-all;
+    white-space: pre-line;
+    min-height: 3.2em;
+    animation: fadeIn 1s ease-out;
+}
