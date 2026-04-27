@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>단어 수집 게임</title>
+  <meta name="description" content="움직이는 글자 블록을 눌러 단어를 맞추는 미니게임" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app">
+    <div class="cursor-emoji hidden" id="cursor-emoji" aria-hidden="true"></div>
+    <!-- SCENE 1: Door knock + quiz -->
+    <section class="screen screen-scene hidden" id="scene1" aria-label="화면1">
+      <div class="scene1-stage" id="scene1-stage">
+        <div class="scene1-zoom" id="scene1-zoom">
+          <img class="scene-layer layer-4" id="scene1-layer4" alt="" />
+          <img class="scene-layer layer-3" id="scene1-layer3" alt="" />
+          <img class="scene-layer layer-2" id="scene1-layer2" alt="" />
+          <img class="scene-layer layer-1" id="scene1-layer1" alt="" />
+        </div>
+      </div>
+
+      <div class="scene-textbox" id="scene1-textbox1">
+        <div class="scene-text-inner" id="scene1-text1"></div>
+      </div>
+      <div class="scene-textbox" id="scene1-textbox2">
+        <div class="scene-text-inner" id="scene1-text2"></div>
+      </div>
+
+      <div class="scene-hearts" id="scene1-hearts" aria-label="하트"></div>
+
+      <div class="scene-quizbox" id="scene1-quizbox" aria-label="퀴즈 박스">
+        <div class="scene-quiz-title" id="scene1-quizprompt"></div>
+        <div class="scene-quiz-row">
+          <input type="text" class="scene-quiz-input" id="scene1-answer" />
+          <button type="button" class="scene-quiz-btn" id="scene1-submit">확인</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCENE 2: Dialogue over image2 -->
+    <section class="screen screen-scene hidden" id="scene2" aria-label="화면2">
+      <div class="scene-bg" id="scene2-bg"></div>
+      <div class="scene-textbox" id="scene2-textbox">
+        <div class="scene-text-inner" id="scene2-text"></div>
+      </div>
+    </section>
+
+    <!-- SCENE 3: Pre-game start -->
+    <section class="screen screen-scene hidden" id="scene3" aria-label="화면3">
+      <div class="scene-bg" id="scene3-bg"></div>
+      <div class="scene-textbox" id="scene3-textbox">
+        <div class="scene-text-inner" id="scene3-text"></div>
+      </div>
+      <button type="button" class="btn-start" id="scene3-start">시작</button>
+    </section>
+
+    <!-- 2) 인게임 화면 -->
+    <section class="screen screen-game hidden" id="screen-game" aria-label="인게임 화면">
+      <div class="game-bg" id="game-bg"></div>
+
+      <div class="phase-text" id="phase-text" aria-label="Phase 텍스트"></div>
+
+      <div class="hud">
+        <div class="hud-left" aria-label="하트 패널">
+          <div class="hud-card">
+            <div class="hud-title"></div>
+            <div class="hud-value" id="hearts"></div>
+          </div>
+        </div>
+        <div class="hud-right" aria-label="시간 패널">
+          <div class="hud-card">
+            <div class="hud-title">TIME</div>
+            <div class="hud-value" id="time">00.0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="answer-panel" id="answer-panel" aria-label="정답 패널">
+        <div class="answer-progress" id="progress">_ _ _ _</div>
+      </div>
+
+      <div class="arena" id="arena" aria-label="단어 블록 영역"></div>
+
+      <div class="game-overlay hidden" id="overlay">
+        <div class="overlay-card">
+          <div class="overlay-title" id="overlay-title">성공!</div>
+          <div class="overlay-sub" id="overlay-sub"></div>
+          <div class="overlay-actions">
+            <button type="button" class="btn" id="btn-retry">다시 하기</button>
+            <button type="button" class="btn btn-secondary" id="btn-back">처음으로</button>
+          </div>
+          <label class="toggle" style="margin-top:10px;">
+            <input type="checkbox" id="toggle-sfx" checked />
+            <span>효과음</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen screen-fail hidden" id="screen-fail" aria-label="실패 화면">
+      <div class="fail-bg"></div>
+      <div class="fail-text fail-text1" id="fail-text1"></div>
+      <div class="fail-text fail-text2" id="fail-text2"></div>
+      <div class="fail-actions">
+        <button type="button" class="btn" id="btn-fail-retry">다시 하기</button>
+        <button type="button" class="btn btn-secondary" id="btn-fail-back">처음으로</button>
+      </div>
+    </section>
+
+    <!-- SCENE 5: Ending -->
+    <section class="screen screen-scene hidden" id="scene5" aria-label="화면5">
+      <div class="scene-bg" id="scene5-bg"></div>
+      <div class="scene-textbox" id="scene5-textbox">
+        <div class="scene-text-inner" id="scene5-text"></div>
+      </div>
+      <button type="button" class="btn-start" id="scene5-startover">처음부터</button>
+    </section>
+  </main>
+
+  <script src="./game-config.js"></script>
+  <script src="./game.js"></script>
+</body>
+</html>
+
