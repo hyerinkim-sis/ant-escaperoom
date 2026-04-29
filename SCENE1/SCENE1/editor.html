@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCENE1 에디터</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { overflow-y: auto; background: #121212; padding: 40px; align-items: flex-start; justify-content: flex-start; }
+        .editor-container { max-width: 1000px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 400px; gap: 30px; }
+        .edit-panel { background: #1e1e1e; padding: 30px; border-radius: 20px; border: 1px solid #333; }
+        .preview-panel { position: sticky; top: 40px; background: #1e1e1e; padding: 20px; border-radius: 20px; border: 1px solid #333; height: fit-content; }
+        .preview-tabs { display:flex; gap:10px; margin: 8px 0 12px; }
+        .tab-btn { width:100%; padding:10px 12px; border-radius: 12px; border:1px solid #333; background:#2a2a2a; color:#fff; cursor:pointer; font-weight:bold; }
+        .tab-btn.active { background: linear-gradient(135deg, #ff9d00, #ff5e00); border-color: transparent; }
+        .phone-frame { background:#0b0b0b; border:1px solid #333; border-radius: 22px; padding: 12px; }
+        .phone-viewport { width: 100%; aspect-ratio: 9 / 16; border-radius: 16px; overflow:hidden; position:relative; background:#000; }
+        .pv-screen { position:absolute; inset:0; display:none; }
+        .pv-screen.active { display:block; }
+        .pv-bg { position:absolute; inset:0; background-size: cover; background-position:center; filter: saturate(1.02); }
+        .pv-topText { position:absolute; left:50%; top:12%; transform:translate(-50%,-50%); width: 92%; text-align:center; white-space:pre-wrap; font-weight:900; text-shadow: 0 10px 22px rgba(0,0,0,0.6); }
+        .pv-card { position:absolute; left:50%; top:55%; transform:translate(-50%,-50%); width: 86%; padding: 18px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.28); backdrop-filter: blur(8px); color:#fff; text-align:center; }
+        .pv-card .pv-problem { margin-top: 10px; font-size: 12px; opacity: .95; white-space: pre-wrap; }
+        .pv-card .pv-input { margin-top: 12px; height: 34px; border-radius: 10px; border:1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.08); }
+        .pv-card .pv-btn { margin-top: 10px; height: 36px; border-radius: 12px; background: linear-gradient(135deg, #ff9d00, #ff5e00); }
+        .pv-list { position:absolute; inset:0; display:flex; flex-direction:column; }
+        .pv-scroll { flex:1; overflow:hidden; padding: 12px; }
+        .pv-items { height:100%; overflow:auto; display:flex; flex-direction:column; align-items:center; }
+        .pv-item { width: 100%; display:flex; flex-direction:column; align-items:center; }
+        .pv-item img { width: 100%; height:auto; border-radius: 14px; display:block; }
+        .pv-item .pv-itemText { white-space:pre-wrap; }
+        .pv-footer { padding: 10px 12px 12px; border-top:1px solid rgba(255,255,255,0.12); background: linear-gradient(to top, rgba(15,15,15,.95) 60%, rgba(15,15,15,0)); display:flex; justify-content:center; }
+        .pv-footer .pv-back { width: 70%; height: 36px; border-radius: 12px; background: linear-gradient(135deg, #ff9d00, #ff5e00); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #888; font-size: 0.9rem; }
+        input[type="text"], textarea { width: 100%; background: #2a2a2a; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; font-family: inherit; resize: vertical; }
+        textarea { min-height: 80px; }
+        .item-row { background: #262626; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; position: relative; }
+        .remove-btn { position: absolute; top: 10px; right: 10px; background: #ff4444; padding: 5px 10px; font-size: 0.8rem; }
+        .add-btn { background: #44bb44; width: 100%; margin-top: 10px; }
+        .save-btn { background: var(--primary-color); width: 100%; font-weight: bold; margin-bottom: 10px; }
+        h2 { margin-bottom: 20px; color: var(--primary-color); font-size: 1.5rem; }
+        h3 { margin-bottom: 15px; font-size: 1.1rem; }
+        pre { background: #000; color: #0f0; padding: 10px; border-radius: 8px; font-size: 0.8rem; overflow-x: auto; max-height: 400px; }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <div class="edit-panel" id="editor-form">
+            <!-- Form will be generated here -->
+        </div>
+        <div class="preview-panel">
+            <h2>실시간 미리보기</h2>
+            <div class="preview-tabs">
+                <button class="tab-btn active" id="pv-tab-quiz" type="button" onclick="setPreviewScreen('quiz')">1화면</button>
+                <button class="tab-btn" id="pv-tab-list" type="button" onclick="setPreviewScreen('list')">2화면</button>
+            </div>
+            <div class="phone-frame">
+                <div class="phone-viewport" id="live-preview">
+                    <div class="pv-screen active" id="pv-quiz">
+                        <div class="pv-bg" id="pv-quiz-bg"></div>
+                        <div class="pv-topText" id="pv-topText"></div>
+                        <div class="pv-card" id="pv-card">
+                            <div style="font-size:12px; opacity:.9;">(퀴즈 카드 미리보기)</div>
+                            <div class="pv-problem" id="pv-problem"></div>
+                            <div class="pv-input"></div>
+                            <div class="pv-btn"></div>
+                        </div>
+                    </div>
+                    <div class="pv-screen" id="pv-list">
+                        <div class="pv-bg" id="pv-list-bg"></div>
+                        <div class="pv-list">
+                            <div class="pv-scroll">
+                                <div class="pv-items" id="pv-items"></div>
+                            </div>
+                            <div class="pv-footer">
+                                <div class="pv-back"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="margin-top:18px;">저장 및 코드</h2>
+            <button class="save-btn" onclick="saveConfig()">💾 서버에 저장하기</button>
+            <button class="save-btn" style="background: #3498db;" onclick="downloadConfig()">🧩 파일 다운로드 (config.js)</button>
+            <div style="margin-top: 20px;">
+                <label>현재 설정 (JSON)</label>
+                <pre id="code-preview"></pre>
+            </div>
+            <div style="margin-top: 20px;">
+                <a href="index.html" target="_blank" style="color: var(--primary-color); text-decoration: none;">➡️ 게임 미리보기 (새창)</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/editor.js"></script>
+</body>
+</html>

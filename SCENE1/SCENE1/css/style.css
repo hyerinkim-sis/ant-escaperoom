@@ -1,0 +1,316 @@
+@font-face {
+    font-family: 'MaplestoryBold';
+    src: url('../assets/Maplestory Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+:root {
+    --primary-color: #ff9d00;
+    --bg-dark: #0f0f0f;
+    --text-light: #f5f5f5;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'MaplestoryBold', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-dark); /* 기본 배경색 추가 */
+    transition: background-image 0.5s ease;
+}
+
+.screen{
+    /* list-screen에서 쓰는 CSS 변수 기본값 */
+    --list-container-pad-top: 32px;
+    --list-container-pad-x: 16px;
+    --list-container-pad-bottom: 16px;
+    --list-item-gap: 40px;
+    --list-image-text-gap: 20px;
+    --list-text-pad-x: 20px;
+    --list-text-size: 22px;
+    --list-text-color: var(--text-light);
+    --list-text-align: center;
+}
+
+/* 퀴즈 화면 상단 텍스트(플로우 내부 요소로 변경) */
+#quiz-top-text{
+    width: 100%;
+    text-align: center;
+    font-size: 34px;
+    font-weight: bold;
+    line-height: 1.25;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    color: #fff;
+    text-shadow: 0 10px 22px rgba(0,0,0,0.6);
+    z-index: 5;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    padding: 20px;
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Quiz Screen Specifics */
+#quiz-screen.screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 0;
+}
+
+.quiz-scroll-area {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 32px 16px 40px;
+}
+
+.quiz-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+#quiz-image-container {
+    width: 100%;
+}
+
+#quiz-image-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: block;
+}
+
+/* Glassmorphism Card */
+.card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    /* 애니메이션 제거 또는 수정 */
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    text-shadow: 0 0 15px rgba(255, 157, 0, 0.4);
+}
+
+p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.quiz-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+input[type="text"] {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: white;
+    font-family: inherit;
+    font-size: 1.1rem;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: var(--primary-color);
+}
+
+button {
+    background: linear-gradient(135deg, #ff9d00, #ff5e00);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 15px 30px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 157, 0, 0.3);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 157, 0, 0.4);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* List Screen — 정답 후 전용 화면: 본문 스크롤 + 하단 고정 돌아가기 */
+#list-screen.screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--bg-dark);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* 배경 이미지가 있을 때 글자 가독성 */
+#list-screen.list-screen--has-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 15, 15, 0.72);
+    pointer-events: none;
+    z-index: 0;
+}
+
+#list-screen .list-scroll-area,
+#list-screen .list-footer {
+    position: relative;
+    z-index: 1;
+}
+
+.list-scroll-area {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--list-container-pad-top) var(--list-container-pad-x) var(--list-container-pad-bottom);
+}
+
+.list-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--list-item-gap);
+    align-items: center;
+}
+
+.list-item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--list-image-text-gap);
+    /* 정적 배치(움직임/등장 애니메이션 제거) */
+    animation: none;
+}
+
+.list-item img {
+    width: 100%;
+    max-width: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: none;
+    height: auto;
+    display: block;
+}
+
+.list-item img:hover {
+    transform: none;
+}
+
+.list-item-text {
+    font-size: var(--list-text-size);
+    color: var(--list-text-color);
+    text-align: var(--list-text-align);
+    padding: 0 var(--list-text-pad-x);
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.list-footer {
+    flex: 0 0 auto;
+    padding: 16px 20px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to top, rgba(15, 15, 15, 0.98) 60%, rgba(15, 15, 15, 0));
+    border-top: 1px solid var(--glass-border);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}

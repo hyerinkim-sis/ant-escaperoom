@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비밀 기지 접근</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- BGM Audio Element -->
+        <audio id="bgm-player" loop></audio>
+
+        <!-- Screen 1: Quiz -->
+        <section id="quiz-screen" class="screen active">
+            <div class="quiz-scroll-area">
+                <div class="quiz-container">
+                    <div id="quiz-image-container"></div>
+                    <div id="quiz-top-text" aria-label="상단 텍스트"></div>
+                    <div class="card">
+                        <p id="quiz-text"></p>
+                        <div class="quiz-input-group">
+                            <p id="quiz-problem" style="font-weight: bold; margin-bottom: 10px;"></p>
+                            <input type="text" id="answer-input" placeholder="정답을 입력하세요">
+                            <button id="submit-btn">확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 2: 정답 후 전용 결과 화면 (세로 스크롤 + 하단 돌아가기) -->
+        <section id="list-screen" class="screen" aria-label="결과 화면">
+            <div class="list-scroll-area">
+                <div class="list-container" id="list-content">
+                    <!-- Items will be injected here -->
+                </div>
+            </div>
+            <footer class="list-footer">
+                <button type="button" id="back-btn">처음으로</button>
+            </footer>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
