@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>game2 에디터 - 힌트 페이지</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { 
+            overflow-y: auto; 
+            background: #121212; 
+            padding: 40px; 
+            align-items: flex-start; 
+            justify-content: flex-start; 
+            height: auto;
+            flex-direction: row;
+            font-family: var(--font-ui);
+        }
+        .editor-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            width: 100%; 
+            display: grid; 
+            grid-template-columns: 1fr 450px; 
+            gap: 30px; 
+        }
+        .edit-panel { 
+            background: #1e1e1e; 
+            padding: 30px; 
+            border-radius: 20px; 
+            border: 1px solid #333; 
+        }
+        .preview-panel { 
+            position: sticky; 
+            top: 40px; 
+            background: #1e1e1e; 
+            padding: 20px; 
+            border-radius: 20px; 
+            border: 1px solid #333; 
+            height: fit-content; 
+        }
+        .phone-frame { 
+            background:#0b0b0b; 
+            border:1px solid #333; 
+            border-radius: 22px; 
+            padding: 12px; 
+            width: 100%;
+        }
+        .phone-viewport { 
+            width: 100%; 
+            aspect-ratio: 9 / 16; 
+            border-radius: 16px; 
+            overflow:hidden; 
+            position:relative; 
+            background:#000; 
+        }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #888; font-size: 0.9rem; }
+        input[type="text"], input[type="number"], textarea { 
+            width: 100%; background: #2a2a2a; border: 1px solid #333; color: white; padding: 12px; border-radius: 8px; font-family: inherit; 
+        }
+        
+        .save-btn { 
+            background: linear-gradient(135deg, #ff9d00, #ff5e00); 
+            width: 100%; 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+        }
+        h2 { margin-bottom: 20px; color: #ff9d00; font-size: 1.5rem; }
+        pre { background: #000; color: #0f0; padding: 10px; border-radius: 8px; font-size: 0.8rem; overflow-x: auto; max-height: 400px; }
+        .movement-block { border: 1px solid #444; padding: 16px; border-radius: 12px; margin-bottom: 16px; background: #252525; }
+        .movement-block-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 12px; }
+        .movement-block-head strong { color: #ccc; font-size: 0.95rem; }
+        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+        .btn-small {
+            background: #333; color: #fff; border: 1px solid #555; padding: 8px 14px; border-radius: 8px;
+            cursor: pointer; font-size: 0.85rem;
+        }
+        .btn-small:hover:not(:disabled) { background: #444; }
+        .btn-small:disabled { opacity: 0.35; cursor: not-allowed; }
+        .btn-add { background: #2d5a27; border-color: #3d7a37; }
+        .btn-add:hover { background: #3d7a37; }
+        .btn-del { background: #5a2727; border-color: #7a3737; }
+        .btn-del:hover:not(:disabled) { background: #7a3737; }
+        
+        /* Preview overrides for phone viewport */
+        .phone-viewport #background { filter: brightness(0.6); }
+        .phone-viewport .game-viewport { width: 100%; max-width: none; border: none; }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <div class="edit-panel" id="editor-form">
+            <!-- Form will be generated here -->
+        </div>
+        <div class="preview-panel">
+            <h2>실시간 미리보기</h2>
+            <div class="phone-frame">
+                <div class="phone-viewport" id="live-preview">
+                    <!-- Preview content matches index.html -->
+                    <div id="background"></div>
+                    <section id="screen-1" class="screen active" aria-label="문제 화면">
+                        <div class="game-viewport" id="viewport">
+                            <div class="dialogue-container">
+                                <p class="dialogue-text" id="dialogue-content"></p>
+                                <p class="dialogue-text dialogue-text-2" id="dialogue-content-2"></p>
+                            </div>
+                            <img id="emoji-ant" alt="순찰개미" />
+
+                            <div class="quiz-card" id="quiz-card" aria-label="문제 입력 박스">
+                                <p class="quiz-problem" id="quiz-problem"></p>
+                                <div class="quiz-input-row">
+                                    <input type="text" id="answer-input" autocomplete="off" spellcheck="false" />
+                                    <button type="button" id="submit-btn">확인</button>
+                                </div>
+                                <p class="quiz-hint" id="quiz-hint"></p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="screen-2" class="screen" aria-label="정답 화면">
+                        <div class="result-screen">
+                            <div class="result-text" id="result-text"></div>
+                            <button type="button" class="result-back-btn" id="back-btn">돌아가기</button>
+                        </div>
+                    </section>
+                    <div id="scene-fade" aria-hidden="true"></div>
+                </div>
+            </div>
+            <audio id="bgm" loop preload="auto"></audio>
+
+            <h2 style="margin-top:18px;">저장 및 코드</h2>
+            <button class="save-btn" onclick="saveConfig()">💾 서버에 저장하기</button>
+            <button class="save-btn" style="background: #3498db;" onclick="downloadConfig()">🧩 파일 다운로드 (config.js)</button>
+            <div style="margin-top: 20px;">
+                <label>현재 설정 (JSON)</label>
+                <pre id="code-preview"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
