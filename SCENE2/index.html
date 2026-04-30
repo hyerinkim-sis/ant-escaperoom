@@ -8,8 +8,15 @@
 </head>
 <body>
     <div id="game-container">
+        <!-- BGM: 모바일(iOS 등)은 사용자 탭 직후 play()만 허용 — 터치 기기용 시작 레이어 -->
+        <div id="bgm-start-overlay" class="bgm-start-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="bgm-start-title" aria-hidden="true">
+            <div class="bgm-start-overlay__panel">
+                <p id="bgm-start-title" class="bgm-start-overlay__title">탭하여 시작</p>
+                <p class="bgm-start-overlay__hint">배경음 재생을 위해 화면을 눌러주세요</p>
+            </div>
+        </div>
         <!-- BGM Audio Element -->
-        <audio id="bgm-player" loop></audio>
+        <audio id="bgm-player" loop preload="auto" playsinline></audio>
 
         <!-- Screen 1: Quiz -->
         <section id="quiz-screen" class="screen active">

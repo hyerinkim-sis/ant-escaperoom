@@ -34,7 +34,14 @@
         </div>
     </section>
     <div id="scene-fade" aria-hidden="true"></div>
-    <audio id="bgm" loop preload="auto"></audio>
+    <!-- BGM: 모바일(iOS 등)은 사용자 탭 직후 play()만 허용 — 터치 기기용 시작 레이어 -->
+    <div id="bgm-start-overlay" class="bgm-start-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="bgm-start-title" aria-hidden="true">
+        <div class="bgm-start-overlay__panel">
+            <p id="bgm-start-title" class="bgm-start-overlay__title">탭하여 시작</p>
+            <p class="bgm-start-overlay__hint">배경음 재생을 위해 화면을 눌러주세요</p>
+        </div>
+    </div>
+    <audio id="bgm" loop preload="auto" playsinline></audio>
     <script src="js/config.js"></script>
     <script src="js/script.js"></script>
 </body>

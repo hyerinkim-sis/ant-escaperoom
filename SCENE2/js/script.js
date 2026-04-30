@@ -18,8 +18,65 @@ document.addEventListener('DOMContentLoaded', () => {
     const listContent = document.getElementById('list-content');
     const backBtn = document.getElementById('back-btn');
 
-    let audioStarted = false;
+    const bgmStartOverlay = document.getElementById('bgm-start-overlay');
+
+    /** BGM이 실제로 재생된 뒤에만 true (실패 시 재시도 가능 — 모바일 자동재생 정책) */
+    let bgmPlaySucceeded = false;
+    let detachBgmGestureListeners = null;
     let quizBackgroundUrl = '';
+
+    function isTouchLikeDevice() {
+        return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    }
+
+    function hideBgmStartOverlay() {
+        if (!bgmStartOverlay) return;
+        bgmStartOverlay.classList.add('is-hidden');
+        bgmStartOverlay.setAttribute('aria-hidden', 'true');
+    }
+
+    function showBgmStartOverlay() {
+        if (!bgmStartOverlay) return;
+        bgmStartOverlay.classList.remove('is-hidden');
+        bgmStartOverlay.setAttribute('aria-hidden', 'false');
+    }
+
+    function tryPlayBgmFromUserGesture() {
+        if (bgmPlaySucceeded || !bgmPlayer || !bgmPlayer.src) return;
+
+        const afterPlay = () => {
+            bgmPlaySucceeded = true;
+            hideBgmStartOverlay();
+            if (typeof detachBgmGestureListeners === 'function') {
+                detachBgmGestureListeners();
+                detachBgmGestureListeners = null;
+            }
+        };
+
+        const p = bgmPlayer.play();
+        if (p !== undefined) {
+            p.then(afterPlay).catch(() => {
+                // iOS 등: 로드/정책 문제면 다음 탭에서 재시도
+            });
+        } else {
+            afterPlay();
+        }
+    }
+
+    function attachBgmGestureUnlock() {
+        const opts = { capture: true, passive: true };
+        const onGesture = () => tryPlayBgmFromUserGesture();
+
+        document.addEventListener('pointerdown', onGesture, opts);
+        document.addEventListener('touchend', onGesture, opts);
+        document.addEventListener('click', onGesture, opts);
+
+        detachBgmGestureListeners = () => {
+            document.removeEventListener('pointerdown', onGesture, opts);
+            document.removeEventListener('touchend', onGesture, opts);
+            document.removeEventListener('click', onGesture, opts);
+        };
+    }
 
     function escapeHtml(s) {
         return String(s)
@@ -105,20 +162,28 @@ document.addEventListener('DOMContentLoaded', () => {
         // 전체 배경은 이제 기본 배경만 사용 (이미지는 flow에 포함)
         gameContainer.style.backgroundImage = 'none';
 
-        // Set BGM (재생은 사용자 제스처 후 — 첫 화면에서도 가능)
+        // Set BGM (모바일은 load 후 사용자 탭 직후 play() 필요)
         bgmPlayer.src = gameConfig.bgm || '';
         bgmPlayer.volume = typeof gameConfig.bgmVolume === 'number' ? gameConfig.bgmVolume : 1;
+        if (bgmPlayer.src) {
+            bgmPlayer.load();
+        }
 
         // Render List Items
         renderList();
         applyListLayoutVars();
 
-        // 첫 화면(퀴즈)에서도 BGM: 클릭/터치 또는 입력 포커스 시 1회 재생 시도
-        const tryStartBgm = () => startAudio();
-        window.addEventListener('pointerdown', tryStartBgm, { once: true, passive: true });
-        window.addEventListener('touchstart', tryStartBgm, { once: true, passive: true });
-        window.addEventListener('click', tryStartBgm, { once: true, passive: true });
-        answerInput.addEventListener('focus', tryStartBgm, { passive: true });
+        const hasBgm = Boolean(bgmPlayer.src);
+        if (hasBgm) {
+            attachBgmGestureUnlock();
+            if (isTouchLikeDevice()) {
+                showBgmStartOverlay();
+            }
+            if (bgmStartOverlay) {
+                bgmStartOverlay.addEventListener('click', () => tryPlayBgmFromUserGesture());
+                bgmStartOverlay.addEventListener('touchend', () => tryPlayBgmFromUserGesture(), { passive: true });
+            }
+        }
     }
 
     function applyListLayoutVars() {
@@ -174,12 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startAudio() {
-        if (!audioStarted) {
-            if (bgmPlayer.src) {
-                bgmPlayer.play().catch((err) => console.log('Audio play deferred', err));
-            }
-            audioStarted = true;
-        }
+        tryPlayBgmFromUserGesture();
     }
 
     submitBtn.addEventListener('click', () => {

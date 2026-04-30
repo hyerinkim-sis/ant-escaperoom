@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dialogueContainer = document.querySelector('.dialogue-container');
     const bottomUi = document.querySelector('.bottom-ui');
     const bgm = document.getElementById('bgm');
+    const bgmStartOverlay = document.getElementById('bgm-start-overlay');
     const sceneFade = document.getElementById('scene-fade');
     const screen1 = document.getElementById('screen-1');
     const screen2 = document.getElementById('screen-2');
@@ -18,6 +19,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const backBtn = document.getElementById('back-btn');
 
     let antHalf = 30;
+    let bgmPlaySucceeded = false;
+    let detachBgmGestureListeners = null;
+
+    function isTouchLikeDevice() {
+        return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    }
+
+    function hideBgmStartOverlay() {
+        if (!bgmStartOverlay) return;
+        bgmStartOverlay.classList.add('is-hidden');
+        bgmStartOverlay.setAttribute('aria-hidden', 'true');
+    }
+
+    function showBgmStartOverlay() {
+        if (!bgmStartOverlay) return;
+        bgmStartOverlay.classList.remove('is-hidden');
+        bgmStartOverlay.setAttribute('aria-hidden', 'false');
+    }
 
     function applyAntConfig(config) {
         const antCfg = config.ant || {};
@@ -62,6 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const src = config.bgm?.src || 'assets/BGM.mp3';
             if (bgm.getAttribute('src') !== src) {
                 bgm.setAttribute('src', src);
+                bgm.load();
             }
             const v = Number(config.bgm?.volume);
             bgm.volume = Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0.6;
@@ -373,26 +393,50 @@ document.addEventListener('DOMContentLoaded', () => {
     resetMovementState();
     setTimeout(startMovement, 1000);
 
-    // BGM autoplay attempt (may require user gesture depending on browser)
+    // BGM: 모바일 자동재생 제한 대응 (성공할 때까지 제스처에서 재시도)
     async function tryPlayBgm() {
+        if (bgmPlaySucceeded) return;
         if (!bgm) return;
         if (!gameConfig.bgm?.enabled) return;
+        if (!bgm.getAttribute('src')) return;
         try {
             await bgm.play();
+            bgmPlaySucceeded = true;
+            hideBgmStartOverlay();
+            if (typeof detachBgmGestureListeners === 'function') {
+                detachBgmGestureListeners();
+                detachBgmGestureListeners = null;
+            }
         } catch {
-            // ignore - will be retried on user gesture
+            // ignore - will be retried on next user gesture
         }
     }
-    tryPlayBgm();
-    const resume = () => {
-        tryPlayBgm();
-        window.removeEventListener('pointerdown', resume);
-        window.removeEventListener('touchstart', resume);
-        window.removeEventListener('keydown', resume);
-    };
-    window.addEventListener('pointerdown', resume, { once: true });
-    window.addEventListener('touchstart', resume, { once: true });
-    window.addEventListener('keydown', resume, { once: true });
+
+    function attachBgmGestureUnlock() {
+        const opts = { capture: true, passive: true };
+        const onGesture = () => { void tryPlayBgm(); };
+        document.addEventListener('pointerdown', onGesture, opts);
+        document.addEventListener('touchend', onGesture, opts);
+        document.addEventListener('click', onGesture, opts);
+        document.addEventListener('keydown', onGesture, opts);
+
+        detachBgmGestureListeners = () => {
+            document.removeEventListener('pointerdown', onGesture, opts);
+            document.removeEventListener('touchend', onGesture, opts);
+            document.removeEventListener('click', onGesture, opts);
+            document.removeEventListener('keydown', onGesture, opts);
+        };
+    }
+
+    if (gameConfig.bgm?.enabled) {
+        attachBgmGestureUnlock();
+        if (isTouchLikeDevice()) showBgmStartOverlay();
+        if (bgmStartOverlay) {
+            bgmStartOverlay.addEventListener('click', () => { void tryPlayBgm(); });
+            bgmStartOverlay.addEventListener('touchend', () => { void tryPlayBgm(); }, { passive: true });
+        }
+        void tryPlayBgm();
+    }
 
     // Quiz events
     function submitAnswer() {

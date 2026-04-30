@@ -79,7 +79,7 @@ window.gameConfig = {
       "image": "assets/image2.png",
       "ratImage": "assets/mouse.png",
       "hitSfx": "assets/sfx.wav",
-      "ratMaxHp": 250
+      "ratMaxHp": 50
     },
     "scene4": {
       "id": "scene4",

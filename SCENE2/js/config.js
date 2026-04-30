@@ -15,7 +15,7 @@ const gameConfig = {
             }
         },
         "problem": "어떠한 모양으로\n페로몬 흔적이 있는 것 같은데...\n[- - - -]",
-        "answer": "0602",
+        "answer": "0601",
         "backgroundImage": "assets/삽화6.png",
         "cardStyle": {
             "x": 50,

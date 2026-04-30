@@ -242,6 +242,14 @@ class GameApp {
     const textEl = document.getElementById('dialogue-text');
     const nextBtn = document.getElementById('dialogue-next-btn');
     const box = document.getElementById('dialogue-box');
+    const ensureNextBtnInBox = () => {
+      if (!box || !nextBtn) return;
+      if (nextBtn.parentElement !== box) box.appendChild(nextBtn);
+    };
+    const ensureNextBtnInScreen = () => {
+      if (!screen || !nextBtn) return;
+      if (nextBtn.parentElement !== screen) screen.appendChild(nextBtn);
+    };
     const resetNextBtnStyle = () => {
       nextBtn.style.position = '';
       nextBtn.style.left = '';
@@ -254,9 +262,17 @@ class GameApp {
       nextBtn.style.width = '';
     };
     const applyScene5FinalBtnPosition = () => {
+      // Scene5는 버튼이 텍스트 박스(플렉스 레이아웃) 영향에서 벗어나야 하므로 DOM도 화면 루트로 이동
+      ensureNextBtnInScreen();
+
       const btnPos = (scene.uiPositions && scene.uiPositions['dialogue-next-btn']) || {};
       const leftPct = Number(btnPos.leftPct ?? 50);
-      const topPct = Number(btnPos.topPct ?? 50);
+      // 기존 설정은 bottomPct(편집기 "bottom")로 저장된 경우가 있어 호환 처리
+      const hasTop = btnPos.topPct !== undefined && btnPos.topPct !== null;
+      const hasBottom = btnPos.bottomPct !== undefined && btnPos.bottomPct !== null;
+      const topPct = hasTop
+        ? Number(btnPos.topPct)
+        : (hasBottom ? (100 - Number(btnPos.bottomPct)) : 50);
       nextBtn.style.position = 'fixed';
       nextBtn.style.left = `${leftPct}%`;
       nextBtn.style.right = 'auto';
@@ -268,6 +284,8 @@ class GameApp {
       nextBtn.style.width = 'auto';
     };
     resetNextBtnStyle();
+    // 기본은 대화 박스 안에 (화면5에서만 필요 시 화면 루트로 이동)
+    ensureNextBtnInBox();
 
     let currentLine = 0;
     let isTyping = false;
@@ -1028,6 +1046,7 @@ class GameApp {
               applyScene5FinalBtnPosition();
             } else {
               resetNextBtnStyle();
+              ensureNextBtnInBox();
             }
           }
           return;
@@ -1090,6 +1109,7 @@ class GameApp {
               applyScene5FinalBtnPosition();
             } else {
               resetNextBtnStyle();
+              ensureNextBtnInBox();
             }
           }
         } else if (shouldAutoAdvance) {
