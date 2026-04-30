@@ -135,7 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
     s1HeartsY: $('s1HeartsY'),
     s1HeartSize: $('s1HeartSize'),
     s1HeartGap: $('s1HeartGap'),
-    s1Answers: $('s1Answers'),
+    s1BoardJamos: $('s1BoardJamos'),
+    s1QuizJamos: $('s1QuizJamos'),
     s1QuizX: $('s1QuizX'),
     s1QuizY: $('s1QuizY'),
     s1QuizW: $('s1QuizW'),
@@ -451,7 +452,21 @@ document.addEventListener('DOMContentLoaded', () => {
     setV(fields.s1HeartsY, s1.hearts?.style?.y ?? 34);
     setV(fields.s1HeartSize, s1.hearts?.style?.size ?? 18);
     setV(fields.s1HeartGap, s1.hearts?.style?.gap ?? 8);
-    setV(fields.s1Answers, Array.isArray(s1.quizBox?.answers) ? s1.quizBox.answers.join(', ') : '');
+    const defaultBoard = 'ㄱ,ㅕ,ㅇ,ㅂ,ㅣ,ㅐ,ㅁ,ㅈ,ㄷ,ㅅ,ㄴ,ㅍ,ㅊ,ㅏ,ㅜ,ㅡ,ㅔ,ㅛ,ㅗ,ㅓ';
+    if (Array.isArray(s1.quizBox?.boardJamos) && s1.quizBox.boardJamos.length) {
+      setV(fields.s1BoardJamos, s1.quizBox.boardJamos.join(', '));
+    } else if (typeof s1.quizBox?.boardSequence === 'string' && s1.quizBox.boardSequence.trim()) {
+      setV(fields.s1BoardJamos, s1.quizBox.boardSequence.trim());
+    } else {
+      setV(fields.s1BoardJamos, defaultBoard);
+    }
+    if (Array.isArray(s1.quizBox?.quizJamos) && s1.quizBox.quizJamos.length) {
+      setV(fields.s1QuizJamos, s1.quizBox.quizJamos.join(', '));
+    } else if (Array.isArray(s1.quizBox?.answers) && s1.quizBox.answers.length) {
+      setV(fields.s1QuizJamos, s1.quizBox.answers.join(', '));
+    } else {
+      setV(fields.s1QuizJamos, 'ㄱ,ㅕ,ㅇ,ㅂ,ㅣ,ㄱ,ㅐ,ㅁ,ㅣ');
+    }
     setV(fields.s1QuizX, s1.quizBox?.style?.x ?? 50);
     setV(fields.s1QuizY, s1.quizBox?.style?.y ?? 52);
     setV(fields.s1QuizW, s1.quizBox?.style?.w ?? 520);
@@ -803,7 +818,36 @@ document.addEventListener('DOMContentLoaded', () => {
     s1.quizBox.style.y = getN(fields.s1QuizY, 52);
     s1.quizBox.style.w = Math.max(200, getI(fields.s1QuizW, 520));
     s1.quizBox.style.radius = Math.max(0, getI(fields.s1QuizRadius, 18));
-    s1.quizBox.answers = String(getV(fields.s1Answers, "")).split(',').map((v) => v.trim()).filter(Boolean);
+    const boardRaw = getV(fields.s1BoardJamos, '');
+    const boardJamos = [];
+    if (boardRaw.includes(',')) {
+      boardRaw.split(',').forEach((part) => {
+        const t = String(part).trim();
+        if (!t) return;
+        Array.from(t).forEach((ch) => { if (ch.trim()) boardJamos.push(ch); });
+      });
+    } else {
+      Array.from(boardRaw.trim()).forEach((ch) => { if (ch.trim()) boardJamos.push(ch); });
+    }
+    if (boardJamos.length) {
+      s1.quizBox.boardJamos = boardJamos.slice(0, 20);
+      delete s1.quizBox.boardSequence;
+    } else {
+      delete s1.quizBox.boardJamos;
+    }
+    const jamRaw = getV(fields.s1QuizJamos, '');
+    const quizJamos = [];
+    if (jamRaw.includes(',')) {
+      jamRaw.split(',').forEach((part) => {
+        const t = String(part).trim();
+        if (!t) return;
+        Array.from(t).forEach((ch) => { if (ch.trim()) quizJamos.push(ch); });
+      });
+    } else {
+      Array.from(jamRaw.trim()).forEach((ch) => { if (ch.trim()) quizJamos.push(ch); });
+    }
+    s1.quizBox.quizJamos = quizJamos.length ? quizJamos.slice(0, 20) : ['ㄱ', 'ㅕ', 'ㅇ', 'ㅂ', 'ㅣ', 'ㄱ', 'ㅐ', 'ㅁ', 'ㅣ'];
+    delete s1.quizBox.answers;
 
     const s2 = (config.scenes.scene2 = config.scenes.scene2 || {});
     s2.bgm = getV(fields.s2Bgm).trim();
@@ -910,7 +954,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pvQuiz.style.left = `${s1.quizBox?.style?.x ?? 50}%`;
         pvQuiz.style.top = `${s1.quizBox?.style?.y ?? 52}%`;
         pvQuiz.style.borderRadius = `${s1.quizBox?.style?.radius ?? 18}px`;
-        pvQuiz.textContent = '퀴즈 박스';
+        const jm = Array.isArray(s1.quizBox?.quizJamos) ? s1.quizBox.quizJamos : [];
+        pvQuiz.textContent = jm.length ? `자모 퀴즈 (${jm.length}자)` : '퀴즈 박스';
       } else if (activeTabId === 'tab-scene2') {
         const s2 = scenes.scene2 || {};
         pvBg.style.backgroundImage = `url('${getPreviewUrl(s2.image || '')}')`;
@@ -1100,7 +1145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fields.s1ImgFadeIn, fields.s1ImgShake,
     fields.s1Text1, fields.s1Text1BoxW, fields.s1Text1BoxH, fields.s1Text1PadY, fields.s1Text1PadX, fields.s1Text1Radius, fields.s1Text1MinH, fields.s1Text1X, fields.s1Text1Y, fields.s1Text1Font, fields.s1Text1Color,
     fields.s1Text2, fields.s1Text2BoxW, fields.s1Text2BoxH, fields.s1Text2PadY, fields.s1Text2PadX, fields.s1Text2Radius, fields.s1Text2MinH, fields.s1Text2X, fields.s1Text2Y, fields.s1Text2Font, fields.s1Text2Color,
-    fields.s1Answers, fields.s1QuizX, fields.s1QuizY, fields.s1QuizW,
+    fields.s1BoardJamos, fields.s1QuizJamos, fields.s1QuizX, fields.s1QuizY, fields.s1QuizW,
     fields.s2Bgm, fields.s2Image, fields.s2ImgFadeIn, fields.s2ImgShake,
     fields.s3Bgm, fields.s3Image, fields.s3ImgFadeIn, fields.s3ImgShake,
     fields.s3BtnText, fields.s3BtnX, fields.s3BtnY, fields.s3BtnFont, fields.s3BtnPad,

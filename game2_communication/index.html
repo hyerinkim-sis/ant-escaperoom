@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>앤트축제 - 힌트 페이지</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="background"></div>
+    <section id="screen-1" class="screen active" aria-label="문제 화면">
+        <div class="game-viewport" id="viewport">
+            <div class="dialogue-container">
+                <p class="dialogue-text" id="dialogue-content"></p>
+                <p class="dialogue-text dialogue-text-2" id="dialogue-content-2"></p>
+            </div>
+            <img id="emoji-ant" alt="순찰개미" />
+
+            <div class="quiz-card" id="quiz-card" aria-label="문제 입력 박스">
+                <p class="quiz-problem" id="quiz-problem"></p>
+                <div class="quiz-input-row">
+                    <input type="text" id="answer-input" autocomplete="off" spellcheck="false" />
+                    <button type="button" id="submit-btn">확인</button>
+                </div>
+                <p class="quiz-hint" id="quiz-hint"></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="screen-2" class="screen" aria-label="정답 화면">
+        <div class="result-screen">
+            <div class="result-text" id="result-text"></div>
+            <button type="button" class="result-back-btn" id="back-btn">돌아가기</button>
+        </div>
+    </section>
+    <div id="scene-fade" aria-hidden="true"></div>
+    <audio id="bgm" loop preload="auto"></audio>
+    <script src="js/config.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

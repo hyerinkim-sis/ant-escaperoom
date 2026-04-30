@@ -217,10 +217,13 @@
             <input id="s1Text2Color" type="color" />
           </div>
 
-          <h4 style="margin:20px 0 8px; border-bottom:1px solid #333; padding-bottom:4px;">❓ 퀴즈 박스</h4>
-          <label>퀴즈 정답</label>
-          <div class="help">쉼표(,)로 구분하여 여러 개의 정답을 인정할 수 있습니다.</div>
-          <input id="s1Answers" type="text" placeholder="정답1, 정답2" />
+          <h4 style="margin:20px 0 8px; border-bottom:1px solid #333; padding-bottom:4px;">❓ 퀴즈 (클릭 자모)</h4>
+          <label>판에 올릴 자모 20개 (왼쪽 열 10개 → 오른쪽 열 10개)</label>
+          <div class="help">게임에서는 화면 양끝에 고정 배치됩니다. 부족하면 기본 판으로 채워집니다.</div>
+          <textarea id="s1BoardJamos" style="min-height:52px;" placeholder="ㄱ,ㅕ,ㅇ,ㅂ,ㅣ,ㅐ,ㅁ,ㅈ,ㄷ,ㅅ,ㄴ,ㅍ,ㅊ,ㅏ,ㅜ,ㅡ,ㅔ,ㅛ,ㅗ,ㅓ"></textarea>
+          <label style="margin-top:10px;">맞출 자모 순서 (9번째 입력 후 한 번에 채점)</label>
+          <div class="help">아래 순서대로 칸을 9번 누른 뒤에만 정답 여부가 판정됩니다. 쉼표 또는 한 줄로 입력 (최대 20자).</div>
+          <textarea id="s1QuizJamos" style="min-height:52px;" placeholder="ㄱ,ㅕ,ㅇ,ㅂ,ㅣ,ㄱ,ㅐ,ㅁ,ㅣ"></textarea>
           <div class="row">
             <div>
               <label>박스 위치 X(%)</label>

@@ -32,10 +32,12 @@
 
       <div class="scene-quizbox" id="scene1-quizbox" aria-label="퀴즈 박스">
         <div class="scene-quiz-title" id="scene1-quizprompt"></div>
-        <div class="scene-quiz-row">
-          <input type="text" class="scene-quiz-input" id="scene1-answer" />
-          <button type="button" class="scene-quiz-btn" id="scene1-submit">확인</button>
+        <div id="scene1-jamo-progress" class="scene-jamo-progress" aria-live="polite"></div>
+        <div class="scene-jamo-board scene-jamo-board--fullscreen">
+          <div id="scene1-jamo-left" class="scene-jamo-col scene-jamo-col--edge-left" aria-label="왼쪽 자모"></div>
+          <div id="scene1-jamo-right" class="scene-jamo-col scene-jamo-col--edge-right" aria-label="오른쪽 자모"></div>
         </div>
+        <p id="scene1-quiz-err" class="scene-quiz-err hidden" role="alert">순서가 맞지 않습니다.</p>
       </div>
     </section>
 

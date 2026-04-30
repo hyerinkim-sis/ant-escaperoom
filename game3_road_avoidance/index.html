@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>앤트축제 - 알렉스 구출 작전</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main class="app">
+    <!-- Screen 1: Pattern Lock -->
+    <section id="screen-pattern" class="screen hidden">
+      <div class="pattern-container">
+        <h2 id="pattern-title" style="margin-bottom: 40px; text-align: center;"></h2>
+        <div class="pattern-grid" id="pattern-grid">
+          <canvas class="pattern-canvas" id="pattern-canvas"></canvas>
+          <div class="pattern-dot" data-index="7"></div>
+          <div class="pattern-dot" data-index="8"></div>
+          <div class="pattern-dot" data-index="9"></div>
+          <div class="pattern-dot" data-index="4"></div>
+          <div class="pattern-dot" data-index="5"></div>
+          <div class="pattern-dot" data-index="6"></div>
+          <div class="pattern-dot" data-index="1"></div>
+          <div class="pattern-dot" data-index="2"></div>
+          <div class="pattern-dot" data-index="3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dialogue Screen (Shared for 2, 4, 5) -->
+    <section id="screen-dialogue" class="screen hidden">
+      <div class="dialogue-box" id="dialogue-box">
+        <div class="dialogue-speaker" id="dialogue-speaker"></div>
+        <div class="dialogue-text" id="dialogue-text"></div>
+        <button id="dialogue-next-btn" class="btn-action hidden" style="align-self: center; margin-top: 20px;"></button>
+      </div>
+    </section>
+
+    <!-- Screen 3: Escape Game -->
+    <section id="screen-escape" class="screen hidden">
+      <div class="hud">
+        <div class="hud-item" id="hud-status">MISSION START</div>
+        <div class="hud-item" id="hud-lives" style="color: var(--secondary); font-size: 1.2rem;">❤️❤️❤️</div>
+      </div>
+      <div id="game-canvas-container">
+        <canvas id="game-canvas" width="800" height="500"></canvas>
+
+        <div id="escape-start-overlay" class="overlay">
+          <h2>알렉스 구출 시작</h2>
+          <p>지시봉(마우스)을 잡고 알렉스를 안전하게 인도하세요!<br>벽에 닿거나 쥐에게 잡히면 실패합니다.</p>
+          <button class="btn-action" id="escape-start-btn">시작하기</button>
+        </div>
+
+        <div id="escape-fail-overlay" class="overlay hidden">
+          <h2 style="color: var(--secondary);">미션 실패</h2>
+          <p id="fail-reason">맥스에게 붙잡혔습니다!</p>
+          <button class="btn-action" id="escape-retry-btn">다시 시도</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="game-config.js"></script>
+  <script src="game.js"></script>
+</body>
+
+</html>

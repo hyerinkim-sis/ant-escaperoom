@@ -59,8 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const elScene1Hearts = document.getElementById('scene1-hearts');
   const elScene1Quiz = document.getElementById('scene1-quizbox');
   const elScene1Prompt = document.getElementById('scene1-quizprompt');
-  const elScene1Answer = document.getElementById('scene1-answer');
-  const elScene1Submit = document.getElementById('scene1-submit');
+  const elScene1JamoProgress = document.getElementById('scene1-jamo-progress');
+  const elScene1JamoLeft = document.getElementById('scene1-jamo-left');
+  const elScene1JamoRight = document.getElementById('scene1-jamo-right');
+  const elScene1QuizErr = document.getElementById('scene1-quiz-err');
 
   const elScene2Bg = document.getElementById('scene2-bg');
   const elScene2Text = document.getElementById('scene2-text');
@@ -118,8 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ['scene1-hearts', elScene1Hearts],
     ['scene1-quizbox', elScene1Quiz],
     ['scene1-quizprompt', elScene1Prompt],
-    ['scene1-answer', elScene1Answer],
-    ['scene1-submit', elScene1Submit],
+    ['scene1-jamo-progress', elScene1JamoProgress],
+    ['scene1-jamo-left', elScene1JamoLeft],
+    ['scene1-jamo-right', elScene1JamoRight],
+    ['scene1-quiz-err', elScene1QuizErr],
     ['scene2-bg', elScene2Bg],
     ['scene2-textbox', elScene2Textbox],
     ['scene2-text', elScene2Text],
@@ -136,6 +140,255 @@ document.addEventListener('DOMContentLoaded', () => {
   if (missing.length) {
     failFast(`필수 UI 요소를 찾지 못했습니다: ${missing.join(', ')}\nindex.html이 최신인지 확인하세요.`);
   }
+
+  const SCENE1_BOARD_DEFAULT = Array.from('ㄱㅕㅇㅂㅣㅐㅁㅈㄷㅅㄴㅍㅊㅏㅜㅡㅔㅛㅗ←');
+  const SCENE1_JAMO_DEFAULT = Array.from('ㄱㅕㅇㅂㅣㄱㅐㅁㅣ');
+
+  function parseScene1QuizJamos(qs) {
+    const q = qs || {};
+    if (Array.isArray(q.quizJamos) && q.quizJamos.length) {
+      const out = [];
+      q.quizJamos.forEach((x) => {
+        const s = String(x ?? '').trim();
+        if (!s) return;
+        Array.from(s).forEach((ch) => {
+          if (ch.trim()) out.push(ch);
+        });
+      });
+      if (out.length) return out;
+    }
+    if (typeof q.quizSequence === 'string' && q.quizSequence.trim()) {
+      return Array.from(q.quizSequence.trim()).filter((ch) => ch.trim());
+    }
+    const ans = Array.isArray(q.answers) ? q.answers : [];
+    if (ans.length >= 1) {
+      const one = String(ans[0] || '').trim();
+      if (one) return Array.from(one).filter((ch) => ch.trim());
+    }
+    return SCENE1_JAMO_DEFAULT.slice();
+  }
+
+  function parseScene1BoardJamos(qs) {
+    const q = qs || {};
+    if (Array.isArray(q.boardJamos) && q.boardJamos.length) {
+      const out = [];
+      q.boardJamos.forEach((x) => {
+        const s = String(x ?? '').trim();
+        if (!s) return;
+        Array.from(s).forEach((ch) => {
+          if (ch.trim()) out.push(ch);
+        });
+      });
+      if (out.length) {
+        const slots = out.slice(0, 20);
+        for (let i = slots.length; i < 20; i += 1) {
+          slots.push(SCENE1_BOARD_DEFAULT[i]);
+        }
+        return slots;
+      }
+    }
+    if (typeof q.boardSequence === 'string' && q.boardSequence.trim()) {
+      const out = [];
+      const raw = q.boardSequence.trim();
+      if (raw.includes(',')) {
+        raw.split(',').forEach((part) => {
+          const t = String(part).trim();
+          if (!t) return;
+          Array.from(t).forEach((ch) => { if (ch.trim()) out.push(ch); });
+        });
+      } else {
+        Array.from(raw).forEach((ch) => { if (ch.trim()) out.push(ch); });
+      }
+      if (out.length) {
+        const slots = out.slice(0, 20);
+        for (let i = slots.length; i < 20; i += 1) {
+          slots.push(SCENE1_BOARD_DEFAULT[i]);
+        }
+        return slots;
+      }
+    }
+    return SCENE1_BOARD_DEFAULT.slice();
+  }
+
+  function buildPlacedAtFromAnswerAndBoard(answerSeq, slots20) {
+    const occurrenceWanted = {};
+    const lastSlot = {};
+    const placedAt = [];
+    for (let t = 0; t < answerSeq.length; t += 1) {
+      const ch = answerSeq[t];
+      occurrenceWanted[ch] = (occurrenceWanted[ch] || 0) + 1;
+      const nth = occurrenceWanted[ch];
+      let occ = 0;
+      let slot = -1;
+      for (let i = 0; i < slots20.length; i += 1) {
+        if (slots20[i] === ch) {
+          occ += 1;
+          if (occ === nth) {
+            slot = i;
+            break;
+          }
+        }
+      }
+      if (slot < 0) {
+        slot = lastSlot[ch];
+        if (slot === undefined) slot = 0;
+      }
+      placedAt.push(slot);
+      lastSlot[ch] = slot;
+    }
+    return placedAt;
+  }
+
+  function buildScene1JamoState(qs) {
+    const ordered = parseScene1BoardJamos(qs);
+    const slots = shuffle(ordered);
+    const seqFull = parseScene1QuizJamos(qs);
+    const len = Math.min(20, Math.max(1, seqFull.length));
+    const seq = seqFull.slice(0, len);
+    const placedAt = buildPlacedAtFromAnswerAndBoard(seq, slots);
+    return { seq, slots, placedAt, len: seq.length };
+  }
+
+  function resetScene1QuizChrome() {
+    elScene1.classList.remove('is-quiz-phase');
+    elScene1Quiz.classList.remove('scene-quizbox--spread');
+    elScene1Quiz.style.left = '';
+    elScene1Quiz.style.top = '';
+    elScene1Quiz.style.transform = '';
+    elScene1Quiz.style.width = '';
+    elScene1Quiz.style.padding = '';
+    elScene1Quiz.style.borderRadius = '';
+  }
+
+  function applyScene1QuizSpreadLayout() {
+    elScene1.classList.add('is-quiz-phase');
+    elScene1Quiz.classList.add('scene-quizbox--spread');
+    elScene1Quiz.style.left = '';
+    elScene1Quiz.style.top = '';
+    elScene1Quiz.style.transform = '';
+    elScene1Quiz.style.width = '';
+    elScene1Quiz.style.padding = '';
+    elScene1Quiz.style.borderRadius = '';
+  }
+
+  function renderScene1JamoColumns(st) {
+    if (!elScene1JamoLeft || !elScene1JamoRight) return;
+    elScene1JamoLeft.innerHTML = '';
+    elScene1JamoRight.innerHTML = '';
+    for (let r = 0; r < 10; r += 1) {
+      const btnL = document.createElement('button');
+      btnL.type = 'button';
+      btnL.className = 'scene-jamo-tile';
+      btnL.dataset.slot = String(r);
+      btnL.textContent = st.slots[r];
+      btnL.setAttribute('aria-label', `왼쪽 ${r + 1}번 ${st.slots[r]}`);
+      elScene1JamoLeft.appendChild(btnL);
+    }
+    for (let r = 0; r < 10; r += 1) {
+      const btnR = document.createElement('button');
+      btnR.type = 'button';
+      btnR.className = 'scene-jamo-tile';
+      btnR.dataset.slot = String(10 + r);
+      btnR.textContent = st.slots[10 + r];
+      btnR.setAttribute('aria-label', `오른쪽 ${r + 1}번 ${st.slots[10 + r]}`);
+      elScene1JamoRight.appendChild(btnR);
+    }
+  }
+
+  function renderScene1JamoProgressBar() {
+    if (!elScene1JamoProgress) return;
+    if (!scene1 || !scene1.jamoState) return;
+    const st = scene1.jamoState;
+    const picks = scene1.jamoPicks || [];
+    elScene1JamoProgress.innerHTML = '';
+    for (let i = 0; i < st.len; i += 1) {
+      const div = document.createElement('div');
+      div.className = 'scene-jamo-slot';
+      if (i < picks.length) {
+        div.classList.add('filled');
+        div.textContent = st.slots[picks[i]];
+      } else if (i === picks.length) {
+        div.classList.add('next');
+        div.textContent = '·';
+      } else {
+        div.textContent = '·';
+      }
+      elScene1JamoProgress.appendChild(div);
+    }
+  }
+
+  function scene1JamoPicksMatchPlacedAt(picks, placedAt) {
+    if (!picks || !placedAt || picks.length !== placedAt.length) return false;
+    for (let i = 0; i < picks.length; i += 1) {
+      if (picks[i] !== placedAt[i]) return false;
+    }
+    return true;
+  }
+
+  elScene1Quiz.addEventListener('pointerdown', (e) => {
+    if (sceneId !== 'scene1' || !scene1 || scene1.phase !== 2 || scene1.ended || !scene1.jamoState) return;
+    const btn = e.target && e.target.closest && e.target.closest('.scene-jamo-tile');
+    if (!btn) return;
+    const slot = parseInt(btn.dataset.slot, 10);
+    if (!Number.isFinite(slot)) return;
+    const st = scene1.jamoState;
+    const qs = (scenesCfg.scene1 && scenesCfg.scene1.quizBox) || {};
+    const lose = Math.max(1, Number(qs.wrongConsumesHeart ?? 1));
+
+    if (!scene1.jamoPicks) scene1.jamoPicks = [];
+
+    if (st.slots[slot] === '←') {
+      if (scene1.jamoPicks.length > 0) {
+        scene1.jamoPicks.pop();
+        renderScene1JamoProgressBar();
+      }
+      ensureAudio();
+      beep('beep2');
+      return;
+    }
+
+    if (scene1.jamoPicks.length >= st.len) return;
+
+    scene1.jamoPicks.push(slot);
+    renderScene1JamoProgressBar();
+
+    if (scene1.jamoPicks.length < st.len) return;
+
+    if (scene1JamoPicksMatchPlacedAt(scene1.jamoPicks, st.placedAt)) {
+      if (elScene1QuizErr) elScene1QuizErr.classList.add('hidden');
+      ensureAudio();
+      beep('ok');
+      btn.classList.remove('is-ok');
+      void btn.offsetWidth;
+      btn.classList.add('is-ok');
+      setTimeout(() => btn.classList.remove('is-ok'), 220);
+      scene1.ended = true;
+      elScene1Textbox1.style.display = 'none';
+      elScene1Textbox2.style.display = 'none';
+      elScene1Hearts.style.display = 'none';
+      elScene1Quiz.style.display = 'none';
+      resetScene1QuizChrome();
+      scene1.jamoState = null;
+      scene1.jamoPicks = [];
+      startScene1ExitAnim();
+      return;
+    }
+
+    scene1.jamoPicks = [];
+    renderScene1JamoProgressBar();
+    if (elScene1QuizErr) elScene1QuizErr.classList.remove('hidden');
+    btn.classList.remove('is-wrong');
+    void btn.offsetWidth;
+    btn.classList.add('is-wrong');
+    setTimeout(() => btn.classList.remove('is-wrong'), 320);
+    consumeHearts(lose);
+    ensureAudio();
+    beep('beep1');
+    renderScene1Hearts();
+    if (run.hearts <= 0) {
+      showFailScreen();
+    }
+  }, { passive: true });
 
   let state = null;
   let rafId = 0; // timer
@@ -469,6 +722,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stopTyping();
     playSceneBgm('scene1');
     const c = scenesCfg.scene1 || {};
+    resetScene1QuizChrome();
     setVisible(elScene1);
     setCursorEmojiText(c.cursorEmoji ?? '🐜');
     setCursorEmojiVisible(true);
@@ -509,85 +763,40 @@ document.addEventListener('DOMContentLoaded', () => {
       elScene1Textbox1.style.display = '';
     }, c.imgFadeInMs ?? 1000);
 
-    // quizbox layout
     const qs = c.quizBox || {};
     elScene1Prompt.textContent = String(qs.prompt || '');
-    elScene1Answer.placeholder = String(qs.placeholder || '');
-    elScene1Submit.textContent = String(qs.submitText || '확인');
-    if (qs.style) {
-      elScene1Quiz.style.left = `${Number(qs.style.x ?? 50)}%`;
-      elScene1Quiz.style.top = `${Number(qs.style.y ?? 52)}%`;
-      elScene1Quiz.style.transform = 'translate(-50%, -50%)';
-      if (typeof qs.style.w === 'number') elScene1Quiz.style.width = `min(${Math.max(200, qs.style.w)}px, 92vw)`;
-      if (typeof qs.style.padding === 'number') elScene1Quiz.style.padding = `${Math.max(0, qs.style.padding)}px`;
-      if (typeof qs.style.radius === 'number') elScene1Quiz.style.borderRadius = `${Math.max(0, qs.style.radius)}px`;
-    }
+    if (elScene1QuizErr) elScene1QuizErr.classList.add('hidden');
 
-    // init state
-    scene1 = { knocks: 0, phase: 1, ended: false };
+    scene1 = { knocks: 0, phase: 1, ended: false, jamoState: null, jamoPicks: [] };
     renderScene1Hearts();
 
-    // input listeners
     const need = Math.max(1, Number(c.knockRequired ?? 3));
     const onAnyInput = (e) => {
       if (sceneId !== 'scene1' || !scene1 || scene1.ended) return;
       if (scene1.phase !== 1) return;
-      // ignore if typing inside input
-      if (e && e.target && (e.target === elScene1Answer)) return;
+      if (e && e.target && e.target.closest && e.target.closest('.scene-jamo-tile')) return;
       ensureAudio();
       beep('beep2');
       scene1.knocks += 1;
       if (scene1.knocks >= need) {
-        // show quiz phase
         scene1.phase = 2;
         elScene1Textbox1.style.display = 'none';
         elScene1Textbox2.style.display = '';
         elScene1Hearts.style.display = '';
         elScene1Quiz.style.display = '';
+        applyScene1QuizSpreadLayout();
         renderScene1Hearts();
-        elScene1Answer.value = '';
-        elScene1Answer.focus();
+        scene1.jamoState = buildScene1JamoState(qs);
+        scene1.jamoPicks = [];
+        renderScene1JamoColumns(scene1.jamoState);
+        renderScene1JamoProgressBar();
+        if (elScene1QuizErr) elScene1QuizErr.classList.add('hidden');
       }
     };
-    // attach once per enter by removing previous
     window.removeEventListener('keydown', onAnyInput);
     window.removeEventListener('pointerdown', onAnyInput);
     window.addEventListener('keydown', onAnyInput);
     window.addEventListener('pointerdown', onAnyInput, { passive: true });
-
-    const answers = Array.isArray(qs.answers) ? qs.answers : [];
-    const onSubmit = () => {
-      if (sceneId !== 'scene1' || !scene1 || scene1.ended) return;
-      if (scene1.phase !== 2) return;
-      const input = normAnswer(elScene1Answer.value);
-      const ok = answers.some((a) => normAnswer(a) === input);
-      if (ok) {
-        scene1.ended = true;
-        // hide UI
-        elScene1Textbox1.style.display = 'none';
-        elScene1Textbox2.style.display = 'none';
-        elScene1Hearts.style.display = 'none';
-        elScene1Quiz.style.display = 'none';
-        startScene1ExitAnim();
-        return;
-      }
-      const lose = Math.max(1, Number(qs.wrongConsumesHeart ?? 1));
-      consumeHearts(lose);
-      ensureAudio();
-      beep('beep1');
-      renderScene1Hearts();
-      if (run.hearts <= 0) {
-        // go fail
-        showFailScreen();
-        return;
-      }
-      elScene1Answer.value = '';
-      elScene1Answer.focus();
-    };
-    elScene1Submit.onclick = onSubmit;
-    elScene1Answer.onkeydown = (e) => {
-      if (e.key === 'Enter') onSubmit();
-    };
   }
 
   function startScene1ExitAnim() {

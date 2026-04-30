@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>쥐 소탕 작전 | 앤트스튜디오</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <!-- Screen 0: 신호 입력 -->
+    <section id="screen-signal" class="screen hidden">
+      <div id="signal-bg" class="signal-bg hidden" aria-hidden="true"></div>
+      <div class="signal-card">
+        <p id="signal-prompt" class="signal-prompt"></p>
+        <p class="signal-hint">알맞은 순서로 칸을 눌러 신호를 완성하세요. (숫자패드 1~9도 사용 가능)</p>
+        <div id="signal-progress" class="signal-progress" aria-live="polite"></div>
+        <div id="signal-grid" class="signal-grid" role="group" aria-label="신호 알파벳 판"></div>
+        <p id="signal-error" class="signal-error hidden">순서가 올바르지 않습니다. 처음부터 다시 눌러 주세요.</p>
+      </div>
+    </section>
+
+    <!-- Screen 3 game: Whack-a-Rat -->
+    <section id="screen-game" class="screen hidden">
+      <div id="screen-game-bg" class="screen-game-bg hidden" aria-hidden="true"></div>
+      <div class="container">
+        <h1 id="game-title">RAT SWEEP</h1>
+        <p id="game-desc" class="desc">Loading...</p>
+
+        <div class="stats stats-hp-row">
+          <div class="stat-item stat-hp-col">
+            <div class="hp-bar-outer" aria-hidden="true">
+              <div id="hp-bar-fill" class="hp-bar-fill"></div>
+            </div>
+            <span id="hp-text" class="hp-text">100 / 100</span>
+            <span class="stat-label">쥐 HP</span>
+          </div>
+          <div class="stat-item">
+            <span id="time" class="stat-value">0</span>
+            <span class="stat-label">TIME</span>
+          </div>
+          <div class="stat-item stat-combo-col">
+            <span id="combo" class="combo-text">콤보 0</span>
+            <span class="stat-label">COMBO</span>
+          </div>
+        </div>
+
+        <div class="grid">
+          <!-- Top Row -->
+          <div class="hole" id="hole-7" data-key="7"><div class="rat" aria-hidden="true"><span class="rat-emoji">🐭</span></div></div>
+          <div class="hole" id="hole-8" data-key="8"><div class="rat" aria-hidden="true"><span class="rat-emoji">🐭</span></div></div>
+          <div class="hole" id="hole-9" data-key="9"><div class="rat" aria-hidden="true"><span class="rat-emoji">🐭</span></div></div>
+          <!-- Mid Row -->
+          <div class="hole" id="hole-4" data-key="4"><div class="rat" aria-hidden="true"><span class="rat-emoji">🐭</span></div></div>
+          <div class="hole" id="hole-5" data-key="5"><div class="rat" aria-hidden="true"><span class="rat-emoji">🐭</span></div></div>
+          <div class="hole" id="hole-6" data-key="6"><div class="rat" aria-hidden="true"><span class="rat-emoji">🐭</span></div></div>
+          <!-- Bottom Row -->
+          <div class="hole" id="hole-1" data-key="1"><div class="rat" aria-hidden="true"><span class="rat-emoji">🐭</span></div></div>
+          <div class="hole" id="hole-2" data-key="2"><div class="rat" aria-hidden="true"><span class="rat-emoji">🐭</span></div></div>
+          <div class="hole" id="hole-3" data-key="3"><div class="rat" aria-hidden="true"><span class="rat-emoji">🐭</span></div></div>
+        </div>
+      </div>
+
+      <!-- Game Start/End Overlay -->
+      <div id="overlay" class="overlay visible">
+        <h2 id="msg-title">READY?</h2>
+        <div id="final-score-container" class="hidden">
+          <p id="final-result-caption">남은 체력</p>
+          <div id="final-score" class="result-score">0</div>
+        </div>
+        <button type="button" id="start-btn" class="btn-gold-pill">미션 시작</button>
+      </div>
+    </section>
+
+    <!-- Dialogue -->
+    <section id="screen-dialogue" class="screen hidden">
+      <div class="dialogue-box" id="dialogue-box">
+        <div class="dialogue-speaker" id="dialogue-speaker"></div>
+        <div class="dialogue-text" id="dialogue-text"></div>
+      </div>
+      <button type="button" id="dialogue-next-btn" class="btn-gold-pill btn-dialogue-next hidden" aria-live="polite"></button>
+    </section>
+
+  </main>
+
+  <script src="game-config.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

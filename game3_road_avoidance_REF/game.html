@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알렉스 구출 미션: 길 피하기 (PRO) | 앤트스튜디오</title>
+    <script src="map_data.js"></script>
+    <style>
+        :root {
+            --primary: #00ffcc;
+            --danger: #ff0055;
+            --bg: #0a0a0c;
+            --path: #1a1a1f;
+            --font: 'Pretendard', sans-serif;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            background-color: var(--bg);
+            color: white;
+            font-family: var(--font);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 500px;
+            background: var(--path);
+            border: 2px solid #333;
+            margin-top: 50px;
+            cursor: none;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+        }
+
+        .wall { position: absolute; background: #222; border: 1px solid #444; }
+
+        .game-obj {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: transform 0.1s linear;
+        }
+
+        .img-fallback { font-size: 2rem; }
+
+        #player {
+            width: 30px; height: 30px;
+            background: rgba(0, 255, 204, 0.2);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        #goal {
+            width: 60px; height: 60px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.6; }
+        }
+
+        .overlay {
+            /* 화면 전체 기준으로 중앙 정렬 */
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--primary); color: black; border: none;
+            padding: 15px 40px; font-size: 1.2rem; font-weight: bold;
+            border-radius: 10px; cursor: pointer; margin-top: 20px;
+        }
+
+        h1 { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+        .msg { font-size: 1.5rem; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div style="margin-top:20px; text-align:center;">
+        <h1>🐜 ROAD AVOIDANCE PRO</h1>
+        <p>추격하는 쥐를 피해 알렉스를 구출하세요!</p>
+    </div>
+
+    <div id="game-container">
+        <!-- Render from MAP_DATA -->
+        <div id="player-container" class="game-obj"><div id="player"></div></div>
+        <div id="goal-container" class="game-obj"></div>
+
+        <div id="start-overlay" class="overlay">
+            <p class="msg">쥐 맥스의 추격이 시작되었습니다!<br>길을 따라 알렉스(🎖️)에게 도달하세요.</p>
+            <button class="btn" onclick="startGame()">MISSION START</button>
+        </div>
+
+        <div id="end-overlay" class="overlay" style="display: none;">
+            <p id="end-msg" class="msg"></p>
+            <button class="btn" onclick="location.reload()">RETRY</button>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('game-container');
+        const playerCont = document.getElementById('player-container');
+        const goalCont = document.getElementById('goal-container');
+        const startOverlay = document.getElementById('start-overlay');
+        const endOverlay = document.getElementById('end-overlay');
+        const endMsg = document.getElementById('end-msg');
+
+        let isGaming = false;
+        let rats = [];
+        let playerPos = { x: 0, y: 0 };
+
+        // Asset Fallback Logic
+        function createObjectWithFallback(id, emoji, imgSrc) {
+            const div = document.createElement('div');
+            const img = new Image();
+            img.src = imgSrc;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.onload = () => div.appendChild(img);
+            img.onerror = () => {
+                const span = document.createElement('span');
+                span.className = 'img-fallback';
+                span.innerText = emoji;
+                div.appendChild(span);
+            };
+            return div;
+        }
+
+        function initMap() {
+            // Render Walls
+            MAP_DATA.walls.forEach(w => {
+                const wall = document.createElement('div');
+                wall.className = 'wall';
+                wall.style.left = w.x + 'px';
+                wall.style.top = w.y + 'px';
+                wall.style.width = w.w + 'px';
+                wall.style.height = w.h + 'px';
+                container.appendChild(wall);
+            });
+
+            // Set Player Initial
+            playerPos = { ...MAP_DATA.player };
+            playerCont.style.left = (playerPos.x - 20) + 'px';
+            playerCont.style.top = (playerPos.y - 20) + 'px';
+            playerCont.appendChild(createObjectWithFallback('p-img', '🐜', 'ant.png'));
+
+            // Set Goal
+            goalCont.style.left = (MAP_DATA.goal.x - 30) + 'px';
+            goalCont.style.top = (MAP_DATA.goal.y - 30) + 'px';
+            goalCont.id = 'goal';
+            goalCont.appendChild(createObjectWithFallback('g-img', '🎖️', 'goal.png'));
+
+            // Set Rats
+            MAP_DATA.rats.forEach(r => {
+                const ratDiv = document.createElement('div');
+                ratDiv.className = 'game-obj';
+                ratDiv.style.left = r.x + 'px';
+                ratDiv.style.top = r.y + 'px';
+                ratDiv.appendChild(createObjectWithFallback('r-img', '🐭', 'mouse.png'));
+                container.appendChild(ratDiv);
+                
+                rats.push({
+                    element: ratDiv,
+                    x: r.x,
+                    y: r.y,
+                    speed: r.speed || 1.5
+                });
+            });
+        }
+
+        function startGame() {
+            startOverlay.style.display = 'none';
+            isGaming = true;
+            loop();
+        }
+
+        function loop() {
+            if (!isGaming) return;
+            moveRats();
+            requestAnimationFrame(loop);
+        }
+
+        // Simple Vector-based Follow with Collision Avoidance
+        function moveRats() {
+            rats.forEach(rat => {
+                const dx = playerPos.x - (rat.x + 20);
+                const dy = playerPos.y - (rat.y + 20);
+                const angle = Math.atan2(dy, dx);
+                
+                const nextX = rat.x + Math.cos(angle) * rat.speed;
+                const nextY = rat.y + Math.sin(angle) * rat.speed;
+
+                // Wall Collision Check for Rat
+                if (!isCollidingWithWall(nextX, nextY, 30, 30)) {
+                    rat.x = nextX;
+                    rat.y = nextY;
+                    rat.element.style.left = rat.x + 'px';
+                    rat.element.style.top = rat.y + 'px';
+                }
+
+                // Interaction Check (Rat vs Player)
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 30) gameOver(false);
+            });
+        }
+
+        function isCollidingWithWall(x, y, w, h) {
+            return MAP_DATA.walls.some(wall => {
+                return (x < wall.x + wall.w &&
+                        x + w > wall.x &&
+                        y < wall.y + wall.h &&
+                        y + h > wall.y);
+            });
+        }
+
+        container.addEventListener('mousemove', (e) => {
+            if (!isGaming) return;
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Player Wall Collision
+            if (isCollidingWithWall(x-15, y-15, 30, 30)) {
+                gameOver(false);
+                return;
+            }
+
+            playerPos = { x, y };
+            playerCont.style.left = (x - 20) + 'px';
+            playerCont.style.top = (y - 20) + 'px';
+
+            // Goal detection
+            const distGoal = Math.sqrt((x - MAP_DATA.goal.x)**2 + (y - MAP_DATA.goal.y)**2);
+            if (distGoal < 40) gameOver(true);
+        });
+
+        function gameOver(win) {
+            isGaming = false;
+            endOverlay.style.display = 'flex';
+            if (win) {
+                endMsg.innerHTML = "🎖️ MISSION COMPLETE!<br>알렉스를 성공적으로 탈출시켰습니다!";
+                endMsg.style.color = "var(--primary)";
+            } else {
+                endMsg.innerHTML = "🐭 맥스에게 잡혔습니다!<br>미션 실패...";
+                endMsg.style.color = "var(--danger)";
+            }
+        }
+
+        initMap();
+    </script>
+</body>
+</html>

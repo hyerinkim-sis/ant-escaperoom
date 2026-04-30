@@ -156,11 +156,40 @@ window.wordGameConfig = {
         "prompt": "암호를 입력하세요",
         "placeholder": "정답을 입력하세요",
         "submitText": "확인",
-        "answers": [
-          "경비개미",
-          "경비 개미"
+        "wrongConsumesHeart": 1,
+        "boardJamos": [
+          "ㄱ",
+          "ㅕ",
+          "ㅇ",
+          "ㅂ",
+          "ㅣ",
+          "ㅐ",
+          "ㅁ",
+          "ㅈ",
+          "ㄷ",
+          "ㅅ",
+          "ㄴ",
+          "ㅍ",
+          "ㅊ",
+          "ㅏ",
+          "ㅜ",
+          "ㅡ",
+          "ㅔ",
+          "ㅛ",
+          "ㅗ",
+          "←"
         ],
-        "wrongConsumesHeart": 1
+        "quizJamos": [
+          "ㄱ",
+          "ㅕ",
+          "ㅇ",
+          "ㅂ",
+          "ㅣ",
+          "ㄱ",
+          "ㅐ",
+          "ㅁ",
+          "ㅣ"
+        ]
       },
       "layerMove": {
         "layer2MoveXvw": -30,
@@ -465,7 +494,7 @@ window.wordGameConfig = {
           }
         },
         {
-          "text": "어서 다녀오게나!\n다른 일꾼개미 윌을 붙여주지.",
+          "text": "어서 다녀오게나!",
           "x": 50,
           "y": 86,
           "fontSize": 26,
