@@ -103,6 +103,7 @@ class GameApp {
   showScene(sceneId) {
     this.currentSceneId = sceneId;
     this._onSignalKey = null;
+    this._onAnyKeyStart = null;
     const scene = this.config.scenes[sceneId];
     if (!scene) {
       console.warn('Unknown scene:', sceneId);
@@ -128,6 +129,17 @@ class GameApp {
 
   setupEventListeners() {
     window.addEventListener('keydown', (e) => {
+      if (typeof this._onAnyKeyStart === 'function') {
+        // Avoid triggering while typing signal puzzle (it uses 1~9).
+        const scene = this.config.scenes[this.currentSceneId];
+        if (scene && scene.type === 'whack-a-rat') {
+          e.preventDefault();
+          const fn = this._onAnyKeyStart;
+          this._onAnyKeyStart = null;
+          fn();
+          return;
+        }
+      }
       if (this.timeUp) return;
       let key = e.key;
       if (key.startsWith('Numpad')) key = key.replace('Numpad', '');
@@ -139,7 +151,10 @@ class GameApp {
       hole.addEventListener('click', () => this.whack(hole));
     });
 
-    document.getElementById('start-btn').addEventListener('click', () => this.startGame());
+    document.getElementById('start-btn').addEventListener('click', () => {
+      this._onAnyKeyStart = null;
+      this.startGame();
+    });
 
     window.addEventListener('keydown', (e) => {
       if (typeof this._onSignalKey !== 'function') return;
@@ -371,9 +386,14 @@ class GameApp {
 
     this.resetGameState(scene);
     document.getElementById('overlay').classList.add('visible');
-    document.getElementById('msg-title').textContent = 'READY?';
+    document.getElementById('msg-title').textContent = 'READY';
+    const msgSub = document.getElementById('msg-sub');
+    if (msgSub) msgSub.textContent = '아무 키나 누르면 시작';
     document.getElementById('final-score-container').classList.add('hidden');
-    document.getElementById('start-btn').textContent = '미션 시작';
+    const startBtn = document.getElementById('start-btn');
+    startBtn.textContent = '미션 시작';
+    startBtn.classList.add('hidden'); // buttonless start: any key
+    this._onAnyKeyStart = () => this.startGame();
   }
 
   getRatMaxHp(scene) {
@@ -397,6 +417,10 @@ class GameApp {
     this.timeUp = false;
     document.getElementById('time').textContent = this.timeLeft;
     document.getElementById('overlay').classList.remove('visible');
+    const startBtn = document.getElementById('start-btn');
+    startBtn.classList.remove('hidden');
+    const msgSub = document.getElementById('msg-sub');
+    if (msgSub) msgSub.textContent = '';
     this.peep();
 
     this.timer = setInterval(() => {
@@ -424,12 +448,16 @@ class GameApp {
       this.winGame();
       return;
     }
-    document.getElementById('msg-title').textContent = 'TIME OVER!';
+    document.getElementById('msg-title').textContent = '실패. 힌트1 차감';
+    const msgSub = document.getElementById('msg-sub');
+    if (msgSub) msgSub.textContent = '시간 내 소탕 실패! 다시 도전하세요.';
     const cap = document.getElementById('final-result-caption');
     if (cap) cap.textContent = '남은 체력';
     document.getElementById('final-score-container').classList.remove('hidden');
     document.getElementById('final-score').textContent = this.ratHp;
-    document.getElementById('start-btn').textContent = '다시 시도';
+    const startBtn = document.getElementById('start-btn');
+    startBtn.textContent = '다시하기';
+    startBtn.classList.remove('hidden');
     document.getElementById('overlay').classList.add('visible');
   }
 

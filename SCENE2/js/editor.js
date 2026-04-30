@@ -15,7 +15,7 @@ const pvCard = document.getElementById('pv-card');
 
 function renderForm() {
     form.innerHTML = `
-        <h2>SCENE1 콘텐츠 설정</h2>
+        <h2>SCENE2 콘텐츠 설정</h2>
         
         <div class="form-group">
             <label>게임 제목</label>
@@ -37,22 +37,40 @@ function renderForm() {
         <div class="form-group">
             <label>상단 텍스트 X(%) / Y(%)</label>
             <div style="display:flex; gap:10px;">
-                <input type="number" step="0.1" min="0" max="100" value="${getQuizTopStyle('x', 50)}" oninput="updateQuizTopStyle('x', this.value)">
-                <input type="number" step="0.1" min="0" max="100" value="${getQuizTopStyle('y', 12)}" oninput="updateQuizTopStyle('y', this.value)">
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:140px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">X(%)</label>
+                    <input type="number" step="0.1" min="0" max="100" value="${getQuizTopStyle('x', 50)}" oninput="updateQuizTopStyle('x', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:140px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">Y(%)</label>
+                    <input type="number" step="0.1" min="0" max="100" value="${getQuizTopStyle('y', 12)}" oninput="updateQuizTopStyle('y', this.value)">
+                </div>
             </div>
         </div>
         <div class="form-group">
             <label>상단 텍스트 크기(px) / 색상</label>
             <div style="display:flex; gap:10px; align-items:center;">
-                <input type="number" step="1" min="8" value="${getQuizTopStyle('fontSize', 34)}" oninput="updateQuizTopStyle('fontSize', this.value)">
-                <input type="color" value="${getQuizTopStyle('color', '#ffffff')}" oninput="updateQuizTopStyle('color', this.value)">
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:160px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">크기(px)</label>
+                    <input type="number" step="1" min="8" value="${getQuizTopStyle('fontSize', 34)}" oninput="updateQuizTopStyle('fontSize', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">색상</label>
+                    <input type="color" value="${getQuizTopStyle('color', '#ffffff')}" oninput="updateQuizTopStyle('color', this.value)">
+                </div>
             </div>
         </div>
         <div class="form-group">
             <label>상단 텍스트 외곽선(px) / 외곽선 색상</label>
             <div style="display:flex; gap:10px; align-items:center;">
-                <input type="number" step="1" min="0" value="${getQuizTopStyle('outlineWidth', 0)}" oninput="updateQuizTopStyle('outlineWidth', this.value)">
-                <input type="color" value="${getQuizTopStyle('outlineColor', '#000000')}" oninput="updateQuizTopStyle('outlineColor', this.value)">
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:160px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">두께(px)</label>
+                    <input type="number" step="1" min="0" value="${getQuizTopStyle('outlineWidth', 0)}" oninput="updateQuizTopStyle('outlineWidth', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">색상</label>
+                    <input type="color" value="${getQuizTopStyle('outlineColor', '#000000')}" oninput="updateQuizTopStyle('outlineColor', this.value)">
+                </div>
             </div>
         </div>
         <div class="form-group">
@@ -80,8 +98,14 @@ function renderForm() {
         <div class="form-group">
             <label>카드 X(%) / Y(%)</label>
             <div style="display:flex; gap:10px;">
-                <input type="number" step="0.1" min="0" max="100" value="${getQuizCard('x', 50)}" oninput="updateQuizCard('x', this.value)">
-                <input type="number" step="0.1" min="0" max="100" value="${getQuizCard('y', 58)}" oninput="updateQuizCard('y', this.value)">
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:140px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">X(%)</label>
+                    <input type="number" step="0.1" min="0" max="100" value="${getQuizCard('x', 50)}" oninput="updateQuizCard('x', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:140px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">Y(%)</label>
+                    <input type="number" step="0.1" min="0" max="100" value="${getQuizCard('y', 58)}" oninput="updateQuizCard('y', this.value)">
+                </div>
             </div>
         </div>
         <div class="form-group">
@@ -91,15 +115,27 @@ function renderForm() {
         <div class="form-group">
             <label>패딩(px) / 둥글기(px)</label>
             <div style="display:flex; gap:10px;">
-                <input type="number" step="1" min="0" value="${getQuizCard('padding', 40)}" oninput="updateQuizCard('padding', this.value)">
-                <input type="number" step="1" min="0" value="${getQuizCard('radius', 24)}" oninput="updateQuizCard('radius', this.value)">
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:160px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">패딩(px)</label>
+                    <input type="number" step="1" min="0" value="${getQuizCard('padding', 40)}" oninput="updateQuizCard('padding', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:160px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">둥글기(px)</label>
+                    <input type="number" step="1" min="0" value="${getQuizCard('radius', 24)}" oninput="updateQuizCard('radius', this.value)">
+                </div>
             </div>
         </div>
         <div class="form-group">
             <label>배경 투명도(0~1) / 블러(px)</label>
             <div style="display:flex; gap:10px;">
-                <input type="number" step="0.01" min="0" max="1" value="${getQuizCard('bgOpacity', 0.28)}" oninput="updateQuizCard('bgOpacity', this.value)">
-                <input type="number" step="1" min="0" value="${getQuizCard('blur', 10)}" oninput="updateQuizCard('blur', this.value)">
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:160px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">배경 투명도(0~1)</label>
+                    <input type="number" step="0.01" min="0" max="1" value="${getQuizCard('bgOpacity', 0.28)}" oninput="updateQuizCard('bgOpacity', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-width:160px;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">블러(px)</label>
+                    <input type="number" step="1" min="0" value="${getQuizCard('blur', 10)}" oninput="updateQuizCard('blur', this.value)">
+                </div>
             </div>
         </div>
         <div class="form-group">
@@ -115,14 +151,39 @@ function renderForm() {
             <input type="text" value="${gameConfig.listScene.backgroundImage || ''}" oninput="updateNested('listScene', 'backgroundImage', this.value)">
         </div>
         <div class="form-group">
-            <label>이미지/텍스트 간격, 아이템 간격, 바깥 패딩(px)</label>
+            <label>간격/패딩(px) — 마지막에 “버튼 아래 여유”가 하단 UI 가림을 해결합니다</label>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <input type="number" min="0" step="1" value="${getListLayout('imageTextGap', 20)}" oninput="updateListLayout('imageTextGap', this.value)" placeholder="이미지-텍스트 간격">
-                <input type="number" min="0" step="1" value="${getListLayout('itemGap', 40)}" oninput="updateListLayout('itemGap', this.value)" placeholder="아이템 간격">
-                <input type="number" min="0" step="1" value="${getListLayout('containerPaddingTop', 32)}" oninput="updateListLayout('containerPaddingTop', this.value)" placeholder="상단 패딩">
-                <input type="number" min="0" step="1" value="${getListLayout('containerPaddingX', 16)}" oninput="updateListLayout('containerPaddingX', this.value)" placeholder="좌우 패딩">
-                <input type="number" min="0" step="1" value="${getListLayout('containerPaddingBottom', 16)}" oninput="updateListLayout('containerPaddingBottom', this.value)" placeholder="하단 패딩">
-                <input type="number" min="0" step="1" value="${getListLayout('textPaddingX', 20)}" oninput="updateListLayout('textPaddingX', this.value)" placeholder="텍스트 좌우 패딩">
+                <div style="display:flex; flex-direction:column; gap:6px; min-width:180px; flex:1;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">이미지↔텍스트 간격</label>
+                    <input type="number" min="0" step="1" value="${getListLayout('imageTextGap', 20)}" oninput="updateListLayout('imageTextGap', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; min-width:180px; flex:1;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">아이템 간격</label>
+                    <input type="number" min="0" step="1" value="${getListLayout('itemGap', 40)}" oninput="updateListLayout('itemGap', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; min-width:180px; flex:1;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">바깥 상단 패딩</label>
+                    <input type="number" min="0" step="1" value="${getListLayout('containerPaddingTop', 32)}" oninput="updateListLayout('containerPaddingTop', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; min-width:180px; flex:1;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">바깥 좌우 패딩</label>
+                    <input type="number" min="0" step="1" value="${getListLayout('containerPaddingX', 16)}" oninput="updateListLayout('containerPaddingX', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; min-width:180px; flex:1;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">바깥 하단 패딩</label>
+                    <input type="number" min="0" step="1" value="${getListLayout('containerPaddingBottom', 16)}" oninput="updateListLayout('containerPaddingBottom', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; min-width:180px; flex:1;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">텍스트 좌우 패딩</label>
+                    <input type="number" min="0" step="1" value="${getListLayout('textPaddingX', 20)}" oninput="updateListLayout('textPaddingX', this.value)">
+                </div>
+                <div style="display:flex; flex-direction:column; gap:6px; min-width:220px; flex:1;">
+                    <label style="margin:0; color:#aaa; font-size:0.8rem;">처음으로 버튼 아래 여유(중요)</label>
+                    <input type="number" min="0" step="1" value="${getListLayout('footerExtraBottomPadding', 24)}" oninput="updateListLayout('footerExtraBottomPadding', this.value)">
+                </div>
+            </div>
+            <div style="margin-top:8px; color:#888; font-size:0.85rem; line-height:1.4;">
+                모바일에서 “처음으로” 버튼이 하단 UI에 가려지면, <b>처음으로 버튼 아래 여유</b> 값을 40~120px 정도로 올려보세요.
             </div>
         </div>
         <div class="form-group">
@@ -395,6 +456,12 @@ function renderLivePreview() {
 
     pvItems.style.gap = `${Math.max(0, Number(layout.itemGap) || 40)}px`;
     pvItems.style.padding = `${Math.max(0, Number(layout.containerPaddingTop) || 32)}px ${Math.max(0, Number(layout.containerPaddingX) || 16)}px ${Math.max(0, Number(layout.containerPaddingBottom) || 16)}px`;
+    // footer(처음으로 버튼 영역) 아래 여유 미리보기 반영
+    const pvFooter = document.querySelector('.pv-footer');
+    if (pvFooter) {
+        const extra = Math.max(0, Number(layout.footerExtraBottomPadding) || 24);
+        pvFooter.style.padding = `10px 12px ${12 + extra}px`;
+    }
 
     pvItems.innerHTML = '';
     (gameConfig.listScene.items || []).forEach((it) => {

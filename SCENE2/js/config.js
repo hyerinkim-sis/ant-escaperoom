@@ -35,6 +35,7 @@ const gameConfig = {
             "containerPaddingTop": 32,
             "containerPaddingX": 16,
             "containerPaddingBottom": 16,
+            "footerExtraBottomPadding": 120,
             "itemGap": 40,
             "imageTextGap": 20,
             "textPaddingX": 20

@@ -43,6 +43,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return JSON.parse(JSON.stringify(obj));
   }
 
+  function resizeGridPreserve(src, srcCols, srcRows, dstCols, dstRows) {
+    const out = new Array(dstCols * dstRows).fill(0);
+    if (!Array.isArray(src) || !srcCols || !srcRows) return out;
+    const copyCols = Math.min(srcCols, dstCols);
+    const copyRows = Math.min(srcRows, dstRows);
+    for (let r = 0; r < copyRows; r++) {
+      for (let c = 0; c < copyCols; c++) {
+        out[r * dstCols + c] = src[r * srcCols + c] ? 1 : 0;
+      }
+    }
+    return out;
+  }
+
   function ensureSceneDefaults() {
     const sceneIds = ['scene2', 'scene4', 'scene5'];
     if (config.scenes && config.scenes.scene3) {
@@ -95,6 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $('s3-rat-image').value = s3.ratImage || '';
     $('s3-player-image').value = s3.playerImage || '';
     $('s3-goal-image').value = s3.goalImage || '';
+    $('s3-panel-width').value = s3.panelWidthPx ?? 800;
+    $('s3-panel-height').value = s3.panelHeightPx ?? 500;
     $('s3-start-btn-left').value = (globalUI['escape-start-btn'] && globalUI['escape-start-btn'].leftPct) ?? 50;
     $('s3-start-btn-bottom').value = (globalUI['escape-start-btn'] && globalUI['escape-start-btn'].bottomPct) ?? 18;
 
@@ -249,6 +264,16 @@ document.addEventListener('DOMContentLoaded', () => {
     $('s3-rat-image').oninput = (e) => { config.scenes.scene3.ratImage = e.target.value; updateAll(); };
     $('s3-player-image').oninput = (e) => { config.scenes.scene3.playerImage = e.target.value; updateAll(); };
     $('s3-goal-image').oninput = (e) => { config.scenes.scene3.goalImage = e.target.value; updateAll(); };
+    $('s3-panel-width').oninput = (e) => {
+      const n = Math.max(300, Math.min(2000, parseInt(e.target.value || '800', 10)));
+      config.scenes.scene3.panelWidthPx = n;
+      updateAll();
+    };
+    $('s3-panel-height').oninput = (e) => {
+      const n = Math.max(200, Math.min(2000, parseInt(e.target.value || '500', 10)));
+      config.scenes.scene3.panelHeightPx = n;
+      updateAll();
+    };
     $('s3-start-btn-left').oninput = (e) => {
       if (!config.uiPositions) config.uiPositions = {};
       if (!config.uiPositions['escape-start-btn']) config.uiPositions['escape-start-btn'] = {};
@@ -265,14 +290,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Tile map inputs
     $('tile-cols').oninput = (e) => {
       if (!config.mapTile) return;
-      config.mapTile.cols = Math.max(5, Math.min(100, parseInt(e.target.value || '32', 10)));
+      const oldCols = config.mapTile.cols;
+      const oldRows = config.mapTile.rows;
+      const nextCols = Math.max(5, Math.min(100, parseInt(e.target.value || '32', 10)));
+      if (nextCols !== oldCols) {
+        config.mapTile.walls = resizeGridPreserve(config.mapTile.walls || [], oldCols, oldRows, nextCols, oldRows);
+        config.mapTile.safeWalls = resizeGridPreserve(config.mapTile.safeWalls || [], oldCols, oldRows, nextCols, oldRows);
+        config.mapTile.cols = nextCols;
+        // Clamp entities into bounds
+        if (config.mapTile.player) config.mapTile.player.c = Math.max(0, Math.min(nextCols - 1, config.mapTile.player.c));
+        if (config.mapTile.goal) config.mapTile.goal.c = Math.max(0, Math.min(nextCols - 1, config.mapTile.goal.c));
+        (config.mapTile.rats || []).forEach(rt => { rt.c = Math.max(0, Math.min(nextCols - 1, rt.c)); });
+      }
       ensureTileWalls();
       drawMap();
       updateAll();
     };
     $('tile-rows').oninput = (e) => {
       if (!config.mapTile) return;
-      config.mapTile.rows = Math.max(5, Math.min(100, parseInt(e.target.value || '20', 10)));
+      const oldCols = config.mapTile.cols;
+      const oldRows = config.mapTile.rows;
+      const nextRows = Math.max(5, Math.min(100, parseInt(e.target.value || '20', 10)));
+      if (nextRows !== oldRows) {
+        config.mapTile.walls = resizeGridPreserve(config.mapTile.walls || [], oldCols, oldRows, oldCols, nextRows);
+        config.mapTile.safeWalls = resizeGridPreserve(config.mapTile.safeWalls || [], oldCols, oldRows, oldCols, nextRows);
+        config.mapTile.rows = nextRows;
+        // Clamp entities into bounds
+        if (config.mapTile.player) config.mapTile.player.r = Math.max(0, Math.min(nextRows - 1, config.mapTile.player.r));
+        if (config.mapTile.goal) config.mapTile.goal.r = Math.max(0, Math.min(nextRows - 1, config.mapTile.goal.r));
+        (config.mapTile.rats || []).forEach(rt => { rt.r = Math.max(0, Math.min(nextRows - 1, rt.r)); });
+      }
       ensureTileWalls();
       drawMap();
       updateAll();
@@ -480,21 +527,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const cols = config.mapTile.cols;
     const rows = config.mapTile.rows;
     const size = cols * rows;
+    const srcCols = Number(config.mapTile.sourceCols ?? config.mapTile._sourceCols ?? cols);
+    const srcRows = Number(config.mapTile.sourceRows ?? config.mapTile._sourceRows ?? rows);
+    const srcSize = srcCols * srcRows;
     if (!Array.isArray(config.mapTile.walls)) config.mapTile.walls = [];
+    if (config.mapTile.walls.length === srcSize && (srcCols !== cols || srcRows !== rows)) {
+      config.mapTile.walls = resizeGridPreserve(config.mapTile.walls, srcCols, srcRows, cols, rows);
+    }
     if (config.mapTile.walls.length !== size) {
-      const next = new Array(size).fill(0);
-      for (let i = 0; i < Math.min(size, config.mapTile.walls.length); i++) next[i] = config.mapTile.walls[i] ? 1 : 0;
-      config.mapTile.walls = next;
+      config.mapTile.walls = resizeGridPreserve(config.mapTile.walls, cols, rows, cols, rows);
     }
     if (!Array.isArray(config.mapTile.safeWalls)) config.mapTile.safeWalls = [];
+    if (config.mapTile.safeWalls.length === srcSize && (srcCols !== cols || srcRows !== rows)) {
+      config.mapTile.safeWalls = resizeGridPreserve(config.mapTile.safeWalls, srcCols, srcRows, cols, rows);
+    }
     if (config.mapTile.safeWalls.length !== size) {
-      const next = new Array(size).fill(0);
-      for (let i = 0; i < Math.min(size, config.mapTile.safeWalls.length); i++) next[i] = config.mapTile.safeWalls[i] ? 1 : 0;
-      config.mapTile.safeWalls = next;
+      config.mapTile.safeWalls = resizeGridPreserve(config.mapTile.safeWalls, cols, rows, cols, rows);
     }
     if (!Array.isArray(config.mapTile.rats)) config.mapTile.rats = [];
     if (!config.mapTile.player) config.mapTile.player = { c: 2, r: 2 };
     if (!config.mapTile.goal) config.mapTile.goal = { c: cols - 3, r: rows - 3 };
+
+    config.mapTile._sourceCols = cols;
+    config.mapTile._sourceRows = rows;
   }
 
   function tileIndex(c, r) {

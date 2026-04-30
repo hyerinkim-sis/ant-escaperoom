@@ -194,6 +194,8 @@ document.addEventListener('DOMContentLoaded', () => {
         listScreen.style.setProperty('--list-container-pad-top', px(layout.containerPaddingTop, 32));
         listScreen.style.setProperty('--list-container-pad-x', px(layout.containerPaddingX, 16));
         listScreen.style.setProperty('--list-container-pad-bottom', px(layout.containerPaddingBottom, 16));
+        // 모바일에서 하단 UI에 버튼이 가려질 때, 버튼 아래에 추가 여백을 둘 수 있게 함 (px)
+        listScreen.style.setProperty('--list-footer-extra-bottom', px(layout.footerExtraBottomPadding, 24));
         listScreen.style.setProperty('--list-item-gap', px(layout.itemGap, 40));
         listScreen.style.setProperty('--list-image-text-gap', px(layout.imageTextGap, 20));
         listScreen.style.setProperty('--list-text-pad-x', px(layout.textPaddingX, 20));
@@ -205,6 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderList() {
+        // list-back-area(돌아가기 버튼)은 항상 맨 아래에 유지
+        const backArea = listContent.querySelector('.list-back-area');
         listContent.innerHTML = '';
         const items = Array.isArray(gameConfig.listScene.items) ? gameConfig.listScene.items : [];
         items.forEach((item, index) => {
@@ -223,6 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
             itemEl.innerHTML = parts.length ? parts.join('') : '<div class="list-item-text">(내용 없음)</div>';
             listContent.appendChild(itemEl);
         });
+        if (backArea) listContent.appendChild(backArea);
         backBtn.textContent = gameConfig.listScene.backButtonText || '돌아가기';
     }
 

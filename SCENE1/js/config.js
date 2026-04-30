@@ -34,10 +34,11 @@ const gameConfig = {
         "layout": {
             "containerPaddingTop": 32,
             "containerPaddingX": 16,
-            "containerPaddingBottom": 16,
+            "containerPaddingBottom": 80,
+            "footerExtraBottomPadding": 120,
             "itemGap": 40,
             "imageTextGap": 20,
-            "textPaddingX": 20
+            "textPaddingX": 80
         },
         "textStyle": {
             "fontSize": 18,

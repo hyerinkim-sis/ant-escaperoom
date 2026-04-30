@@ -1176,8 +1176,30 @@ class GameApp {
     const startBtn = document.getElementById('escape-start-btn');
     if (startBtn) startBtn.innerText = "시작하기";
 
+    // Allow editor-configurable panel size (px)
+    const applyPanelSize = () => {
+      if (!canvasContainer) return;
+      const w = Number(scene.panelWidthPx ?? scene.panelW ?? scene.panelWidth ?? 800);
+      const h = Number(scene.panelHeightPx ?? scene.panelH ?? scene.panelHeight ?? 500);
+      if (!Number.isNaN(w) && w > 0) canvasContainer.style.width = `${Math.round(w)}px`;
+      if (!Number.isNaN(h) && h > 0) canvasContainer.style.height = `${Math.round(h)}px`;
+    };
+    applyPanelSize();
+
     const tile = this.config.mapTile;
     const useTile = tile && tile.cols && tile.rows && tile.tileSize;
+    const resizeGridPreserve = (src, srcCols, srcRows, dstCols, dstRows) => {
+      const out = new Array(dstCols * dstRows).fill(0);
+      if (!Array.isArray(src) || !srcCols || !srcRows) return out;
+      const copyCols = Math.min(srcCols, dstCols);
+      const copyRows = Math.min(srcRows, dstRows);
+      for (let r = 0; r < copyRows; r++) {
+        for (let c = 0; c < copyCols; c++) {
+          out[r * dstCols + c] = src[r * srcCols + c] ? 1 : 0;
+        }
+      }
+      return out;
+    };
     const loadSprite = (src) => {
       if (!src) return null;
       const img = new Image();
@@ -1202,18 +1224,34 @@ class GameApp {
     if (useTile) {
       canvas.width = tile.cols * tile.tileSize;
       canvas.height = tile.rows * tile.tileSize;
+      // Fit the entire map into the fixed container by CSS scaling.
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
       // optional arrays (backward compatible)
       const size = tile.cols * tile.rows;
+      const srcCols = Number(tile.sourceCols ?? tile._sourceCols ?? tile.cols);
+      const srcRows = Number(tile.sourceRows ?? tile._sourceRows ?? tile.rows);
+      const srcSize = srcCols * srcRows;
+
+      // If the stored arrays match the source grid size, remap into the new grid preserving top-left.
+      if (Array.isArray(tile.walls) && tile.walls.length === srcSize && (srcCols !== tile.cols || srcRows !== tile.rows)) {
+        tile.walls = resizeGridPreserve(tile.walls, srcCols, srcRows, tile.cols, tile.rows);
+      }
+      if (Array.isArray(tile.safeWalls) && tile.safeWalls.length === srcSize && (srcCols !== tile.cols || srcRows !== tile.rows)) {
+        tile.safeWalls = resizeGridPreserve(tile.safeWalls, srcCols, srcRows, tile.cols, tile.rows);
+      }
+
+      // Ensure correct size (pad/truncate if still mismatched)
       if (!Array.isArray(tile.walls) || tile.walls.length !== size) {
-        const next = new Array(size).fill(0);
-        for (let i = 0; i < Math.min(size, (tile.walls || []).length); i++) next[i] = tile.walls[i] ? 1 : 0;
-        tile.walls = next;
+        tile.walls = resizeGridPreserve(tile.walls || [], tile.cols, tile.rows, tile.cols, tile.rows);
       }
       if (!Array.isArray(tile.safeWalls) || tile.safeWalls.length !== size) {
-        const next = new Array(size).fill(0);
-        for (let i = 0; i < Math.min(size, (tile.safeWalls || []).length); i++) next[i] = tile.safeWalls[i] ? 1 : 0;
-        tile.safeWalls = next;
+        tile.safeWalls = resizeGridPreserve(tile.safeWalls || [], tile.cols, tile.rows, tile.cols, tile.rows);
       }
+
+      // Mark current grid as the new source to avoid re-remapping repeatedly.
+      tile._sourceCols = tile.cols;
+      tile._sourceRows = tile.rows;
     }
 
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -1582,7 +1620,13 @@ class GameApp {
             : JSON.parse(JSON.stringify(this.config.mapData.rats));
         } else {
           isGaming = false;
-          this.showScene('scene1');
+          // Do not go back to the beginning. Show fail overlay and allow instant retry with 5 hearts.
+          const failReasonEl = document.getElementById('fail-reason');
+          if (failReasonEl) failReasonEl.innerText = "실패. 힌트1차감";
+          const retryBtn = document.getElementById('escape-retry-btn');
+          if (retryBtn) retryBtn.innerText = "다시하기";
+          failOverlay.classList.remove('hidden');
+          startOverlay.classList.add('hidden');
         }
       }
     };
@@ -1590,8 +1634,10 @@ class GameApp {
     canvas.onmousemove = (e) => {
       if (!isGaming) return;
       const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = (e.clientX - rect.left) * scaleX;
+      const y = (e.clientY - rect.top) * scaleY;
 
       if (!hasPickedUp) {
         canvas.style.cursor = 'default';
@@ -1619,6 +1665,7 @@ class GameApp {
 
     document.getElementById('escape-start-btn').onclick = () => {
       startOverlay.classList.add('hidden');
+      failOverlay.classList.add('hidden');
       isGaming = true;
       hasPickedUp = false;
       lives = initialLives;
@@ -1637,9 +1684,23 @@ class GameApp {
 
 
     document.getElementById('escape-retry-btn').onclick = () => {
+      // Instant retry: refill hearts to 5 and immediately start playing again.
       failOverlay.classList.add('hidden');
-      startOverlay.classList.remove('hidden');
-      draw();
+      startOverlay.classList.add('hidden');
+      isGaming = true;
+      hasPickedUp = false;
+      lives = 5;
+      updateLivesUI();
+      canvas.style.cursor = 'default';
+      playerPos = useTile ? tileCenter(tile.player.c, tile.player.r) : { x: this.config.mapData.player.x, y: this.config.mapData.player.y };
+      rats = useTile
+        ? (tile.rats || []).map(rt => {
+          const p = tileCenter(rt.c, rt.r);
+          return { x: p.x, y: p.y, c: rt.c, r: rt.r, speed: rt.speed ?? 2.0, range: rt.range ?? 200, _path: null, _pathIdx: 0, _lastTarget: null, _lastPlanAt: 0 };
+        })
+        : JSON.parse(JSON.stringify(this.config.mapData.rats));
+      statusEl.innerText = "준비: 개미를 잡으세요";
+      update();
     };
 
     draw();

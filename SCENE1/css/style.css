@@ -45,6 +45,8 @@ body {
     --list-container-pad-top: 32px;
     --list-container-pad-x: 16px;
     --list-container-pad-bottom: 16px;
+    /* 모바일 하단 UI(주소창/제스처바) 때문에 버튼이 가려질 때를 대비한 추가 여백(px) */
+    --list-footer-extra-bottom: 24px;
     --list-item-gap: 40px;
     --list-image-text-gap: 20px;
     --list-text-pad-x: 20px;
@@ -205,7 +207,7 @@ button:active {
     transform: translateY(0);
 }
 
-/* List Screen — 정답 후 전용 화면: 본문 스크롤 + 하단 고정 돌아가기 */
+/* List Screen — 정답 후 전용 화면: 본문/버튼 모두 스크롤 */
 #list-screen.screen {
     display: flex;
     flex-direction: column;
@@ -229,8 +231,7 @@ button:active {
     z-index: 0;
 }
 
-#list-screen .list-scroll-area,
-#list-screen .list-footer {
+#list-screen .list-scroll-area {
     position: relative;
     z-index: 1;
 }
@@ -250,6 +251,20 @@ button:active {
     flex-direction: column;
     gap: var(--list-item-gap);
     align-items: center;
+}
+
+.list-back-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    /* 버튼 위 간격은 itemGap과 별도로 고정 */
+    margin-top: 28px;
+    /* 버튼 아래 여유: 모바일 하단 UI(제스처바/주소창) + 설정값 */
+    padding-bottom: calc(24px + var(--list-footer-extra-bottom) + env(safe-area-inset-bottom, 0px));
+}
+
+.list-back-area #back-btn {
+    width: min(520px, 92%);
 }
 
 .list-item {
@@ -290,15 +305,7 @@ button:active {
     to { opacity: 1; transform: translateY(0); }
 }
 
-.list-footer {
-    flex: 0 0 auto;
-    padding: 16px 20px 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(to top, rgba(15, 15, 15, 0.98) 60%, rgba(15, 15, 15, 0));
-    border-top: 1px solid var(--glass-border);
-}
+/* (구) list-footer 제거: 버튼은 list-back-area로 스크롤에 포함 */
 
 /* Scrollbar */
 ::-webkit-scrollbar {

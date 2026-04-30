@@ -559,6 +559,14 @@ h1 {
   font-size: 1.2rem;
 }
 
+#msg-sub {
+  margin-top: 4px;
+  margin-bottom: 22px;
+  color: rgba(203, 213, 225, 0.92);
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+}
+
 .result-score {
   font-size: 5rem;
   font-weight: 900;
