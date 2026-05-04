@@ -365,7 +365,6 @@ document.addEventListener('DOMContentLoaded', () => {
       scene1.ended = true;
       elScene1Textbox1.style.display = 'none';
       elScene1Textbox2.style.display = 'none';
-      elScene1Hearts.style.display = 'none';
       elScene1Quiz.style.display = 'none';
       resetScene1QuizChrome();
       scene1.jamoState = null;
@@ -381,13 +380,8 @@ document.addEventListener('DOMContentLoaded', () => {
     void btn.offsetWidth;
     btn.classList.add('is-wrong');
     setTimeout(() => btn.classList.remove('is-wrong'), 320);
-    consumeHearts(lose);
     ensureAudio();
     beep('beep1');
-    renderScene1Hearts();
-    if (run.hearts <= 0) {
-      showFailScreen();
-    }
   }, { passive: true });
 
   let state = null;
@@ -768,7 +762,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elScene1QuizErr) elScene1QuizErr.classList.add('hidden');
 
     scene1 = { knocks: 0, phase: 1, ended: false, jamoState: null, jamoPicks: [] };
-    renderScene1Hearts();
 
     const need = Math.max(1, Number(c.knockRequired ?? 3));
     const onAnyInput = (e) => {
@@ -782,10 +775,8 @@ document.addEventListener('DOMContentLoaded', () => {
         scene1.phase = 2;
         elScene1Textbox1.style.display = 'none';
         elScene1Textbox2.style.display = '';
-        elScene1Hearts.style.display = '';
         elScene1Quiz.style.display = '';
         applyScene1QuizSpreadLayout();
-        renderScene1Hearts();
         scene1.jamoState = buildScene1JamoState(qs);
         scene1.jamoPicks = [];
         renderScene1JamoColumns(scene1.jamoState);
@@ -1708,7 +1699,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showGame();
   });
   btnBack.addEventListener('click', () => { resetRun(); gotoScene('scene1'); });
-  btnFailRetry.addEventListener('click', () => { resetRun(); gotoScene('scene1'); });
+  btnFailRetry.addEventListener('click', () => { resetRun(); gotoScene('scene4'); });
   btnFailBack.addEventListener('click', () => { resetRun(); gotoScene('scene1'); });
 
   // 최초 렌더

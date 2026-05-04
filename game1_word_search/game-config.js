@@ -67,7 +67,7 @@ window.wordGameConfig = {
   ],
   "failureScreen": {
     "text1": {
-      "text": "GAME OVER",
+      "text": "힌트1 차감",
       "style": {
         "x": 50,
         "y": 42,
@@ -77,7 +77,7 @@ window.wordGameConfig = {
       }
     },
     "text2": {
-      "text": "이렇게 알렉스는 구할 수 없게 되는것인가.",
+      "text": "이렇게 알렉스는 구할 수 없게 되는것인가...\n\n아니,\n다시 해보는 거야!",
       "style": {
         "x": 50,
         "y": 56,

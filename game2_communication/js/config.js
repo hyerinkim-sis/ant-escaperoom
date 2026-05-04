@@ -8,7 +8,7 @@ const gameConfig = {
         "sizePx": 100
     },
     "dialogue": {
-        "text": "<span> -순찰개미일지- </span> </br>  패로몬 냄새 경로가 포착됨  </br>   [ 위치: 나무 근처 낙옆더미 ]",
+        "text": "<span> -순찰개미일지- </span> </br>  낙엽에서 패로몬 냄새 경로가 포착됨  </br>   [ 위치: 나무 근처 낙옆더미 ]",
         "text2": "",
         "style": {
             "top": "15%",
@@ -44,11 +44,7 @@ const gameConfig = {
                         "yPercent": 8
                     },
                     {
-                        "xPercent": -8,
-                        "yPercent": -8
-                    },
-                    {
-                        "xPercent": 8,
+                        "xPercent": 0,
                         "yPercent": -8
                     },
                     {
