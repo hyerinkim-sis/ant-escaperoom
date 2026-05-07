@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>OFFICE FESTIVAL · 부스 안내</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(255,200,220,0.4) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(255,220,180,0.5) 0%, transparent 40%),
+      linear-gradient(135deg, #fff8f3 0%, #fef0f6 100%);
+    margin: 0;
+    padding: 28px 20px;
+    color: #333;
+    min-height: 100vh;
+  }
+
+  /* ===== Flyer Header ===== */
+  .flyer-header {
+    text-align: center;
+    margin: 0 auto 24px;
+    width: 100%;
+    max-width: 1450px;
+    padding: 16px 20px;
+  }
+  .flyer-header .deco-line {
+    font-size: 18px;
+    letter-spacing: 8px;
+    color: #e8a4c0;
+    margin: 4px 0;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .flyer-header h1 {
+    font-size: 44px;
+    font-weight: 900;
+    margin: 10px 0 6px;
+    color: #d63384;
+    letter-spacing: 4px;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .flyer-header .ko-title {
+    font-size: 20px;
+    color: #c0436f;
+    font-weight: bold;
+    letter-spacing: 4px;
+    margin: 6px 0;
+    text-align: center;
+  }
+  .flyer-header .tagline {
+    font-size: 13px;
+    color: #888;
+    margin-top: 6px;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  /* ===== Floor layout ===== */
+  .floor {
+    display: grid;
+    grid-template-columns: 540px 140px 540px;
+    gap: 14px;
+    max-width: 1450px;
+    margin: 0 auto;
+    align-items: stretch;
+  }
+
+  /* ===== LEFT: Festival Main Zone ===== */
+  .festival {
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 100%),
+      linear-gradient(135deg, #fde7f3 0%, #ffddbb 100%);
+    border: 4px double #d63384;
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: 0 8px 30px rgba(214,51,132,0.15);
+    position: relative;
+  }
+  .festival::before {
+    content: '🎀';
+    position: absolute;
+    top: -16px;
+    left: 20px;
+    font-size: 26px;
+  }
+  .festival::after {
+    content: '🎀';
+    position: absolute;
+    top: -16px;
+    right: 20px;
+    font-size: 26px;
+  }
+  .festival-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 900;
+    color: #c0436f;
+    margin-bottom: 14px;
+    padding: 10px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 14px;
+    letter-spacing: 2px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .u-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 120px 120px 120px 120px;
+    gap: 10px;
+  }
+
+  .booth {
+    border-radius: 14px;
+    padding: 10px 8px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 2px solid #ddd;
+    transition: transform 0.2s;
+    position: relative;
+  }
+  .booth .icon { font-size: 32px; margin-bottom: 4px; line-height: 1; }
+  .booth .team {
+    font-size: 11.5px;
+    font-weight: bold;
+    color: #fff;
+    background: #888;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+  }
+  .booth .name {
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1.3;
+    color: #333;
+  }
+
+  /* Booth-specific colors */
+  .b-pd     { background: linear-gradient(135deg, #fff4e8 0%, #ffe0c2 100%); border-color: #d35400; }
+  .b-pd .team { background: #d35400; }
+  .b-color  { background: linear-gradient(135deg, #e8f1ff 0%, #c9dcff 100%); border-color: #4a7dff; }
+  .b-color .team { background: #4a7dff; }
+  .b-draw1  { background: linear-gradient(135deg, #ffe5e5 0%, #ffcccc 100%); border-color: #e74c3c; }
+  .b-draw1 .team { background: #e74c3c; }
+  .b-draw2  { background: linear-gradient(135deg, #fff3d6 0%, #ffe0a3 100%); border-color: #f39c12; }
+  .b-draw2 .team { background: #f39c12; }
+  .b-ai1    { background: linear-gradient(135deg, #ffe0f0 0%, #ffc2dc 100%); border-color: #e91e63; }
+  .b-ai1 .team { background: #e91e63; }
+  .b-ai2    { background: linear-gradient(135deg, #e0ffe8 0%, #b8eecb 100%); border-color: #27ae60; }
+  .b-ai2 .team { background: #27ae60; }
+
+  /* Center walkway with festive feel */
+  .walkway {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    border: 3px dashed #d63384;
+    border-radius: 14px;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.5),
+        rgba(255,255,255,0.5) 10px,
+        rgba(255,228,240,0.5) 10px,
+        rgba(255,228,240,0.5) 20px
+      );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d63384;
+    font-weight: 900;
+    font-size: 15px;
+    flex-direction: column;
+    letter-spacing: 2px;
+  }
+  .walkway .star { font-size: 24px; margin: 4px 0; }
+
+  /* ===== CENTER: Desk area ===== */
+  .desk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 6px;
+    background: rgba(220,220,220,0.3);
+    border-radius: 14px;
+    border: 2px dashed #bbb;
+    color: #999;
+    font-size: 11px;
+    text-align: center;
+  }
+  .desk .desk-label {
+    font-size: 12px;
+    color: #999;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+    font-weight: bold;
+  }
+  .desk .entrance-mini {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #777;
+    background: #e8d6f0;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+
+  /* ===== RIGHT: Other rooms ===== */
+  .right {
+    display: grid;
+    grid-template-columns: 1fr 1fr 110px;
+    grid-template-rows: 36px 150px 30px 150px 70px;
+    gap: 8px;
+    background: rgba(255,255,255,0.5);
+    padding: 14px;
+    border-radius: 20px;
+    border: 3px solid #f0d0a8;
+    box-shadow: 0 8px 30px rgba(243,156,18,0.1);
+  }
+
+  .right-header {
+    grid-column: 1 / 4;
+    grid-row: 1;
+    text-align: center;
+    font-weight: 900;
+    font-size: 16px;
+    color: #c87f3f;
+    padding: 6px;
+    letter-spacing: 3px;
+  }
+
+  .room {
+    border-radius: 12px;
+    padding: 10px;
+    background: #fff;
+    border: 2px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  }
+  .room .icon { font-size: 26px; margin-bottom: 4px; line-height: 1; }
+  .room .nm { font-weight: 900; font-size: 15px; letter-spacing: 1px; }
+  .room .sub { font-size: 12px; color: #666; margin-top: 4px; line-height: 1.4; }
+  .room .team-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: bold;
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-top: 4px;
+  }
+
+  .r-secret   { grid-column: 1 / 3; grid-row: 2;
+                background:
+                  radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, transparent 50%),
+                  linear-gradient(135deg, #2c1f3d 0%, #4a2c5a 50%, #6b3d7a 100%);
+                border: 3px solid #8e44ad;
+                color: #fff;
+                position: relative;
+                overflow: hidden; }
+  .r-secret::before {
+    content: '🗝️';
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    font-size: 18px;
+    opacity: 0.7;
+  }
+  .r-secret::after {
+    content: '🔒';
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 18px;
+    opacity: 0.7;
+  }
+  .r-secret .icon { font-size: 32px; }
+  .r-secret .nm {
+    font-size: 18px;
+    color: #ffd700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    letter-spacing: 3px;
+  }
+  .r-secret .sub { color: #f0d8ff; font-size: 12px; }
+  .r-secret .team-tag { background: #ffd700; color: #2c1f3d; }
+
+  .r-action   { grid-column: 1 / 3; grid-row: 4;
+                background: linear-gradient(135deg, #ebebeb 0%, #d4d4d4 100%);
+                border-color: #555; }
+  .r-action .team-tag { background: #7b4fff; }
+
+  .r-storage1 { grid-column: 1 / 3; grid-row: 5;
+                background: linear-gradient(135deg, #eef7df 0%, #d8ecbb 100%);
+                border-color: #7cb342; }
+
+  .r-lounge   { grid-column: 3; grid-row: 2 / 6;
+                background: linear-gradient(180deg, #fbe8df 0%, #f5c8b3 60%, #e8a890 100%);
+                border: 3px solid #c68b6b;
+                position: relative;
+                overflow: hidden; }
+  .r-lounge .icon { font-size: 30px; }
+  .r-lounge .nm { color: #6a3621; font-size: 16px; }
+  .lounge-event {
+    background: linear-gradient(135deg, #fff0d9 0%, #ffd9b3 100%);
+    border: 2px solid #d35400;
+    border-radius: 10px;
+    padding: 8px 6px;
+    margin-top: 8px;
+    color: #8b3a00;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.5;
+    box-shadow: 0 2px 6px rgba(211,84,0,0.2);
+  }
+  .lounge-event b {
+    display: block;
+    font-size: 14px;
+    color: #c0392b;
+    margin: 3px 0;
+    letter-spacing: 1px;
+  }
+  .lounge-event .event-sub {
+    font-size: 10.5px;
+    color: #6a3621;
+    font-weight: normal;
+    line-height: 1.4;
+    display: block;
+    margin-top: 4px;
+  }
+  .lounge-special {
+    background: rgba(255,255,255,0.9);
+    border: 2px dashed #c68b6b;
+    border-radius: 10px;
+    padding: 6px;
+    margin-top: 6px;
+    color: #a0552d;
+    font-size: 11.5px;
+    font-weight: 900;
+    line-height: 1.4;
+  }
+  .lounge-special .star { display: block; font-size: 16px; }
+
+  .corridor {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    background: #fff9d6;
+    border: 1px dashed #c9a227;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #8b6914;
+    font-weight: bold;
+    letter-spacing: 4px;
+  }
+
+  /* ===== Footer decoration ===== */
+  .flyer-footer {
+    text-align: center;
+    margin-top: 24px;
+    color: #c0436f;
+    font-size: 18px;
+    letter-spacing: 8px;
+  }
+
+  /* ===== Print: A4 landscape ===== */
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+  @media print {
+    html, body {
+      background: #fff !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      padding: 4mm !important;
+    }
+
+    /* Header smaller for print */
+    .flyer-header {
+      margin-bottom: 6px !important;
+      padding: 0 !important;
+    }
+    .flyer-header .deco-line { font-size: 11px !important; margin: 1px 0 !important; letter-spacing: 5px !important; }
+    .flyer-header h1 { font-size: 26px !important; margin: 2px 0 !important; letter-spacing: 2px !important; }
+    .flyer-header .ko-title { font-size: 13px !important; margin: 2px 0 !important; letter-spacing: 3px !important; }
+    .flyer-header .tagline { font-size: 10px !important; margin-top: 2px !important; }
+
+    /* Floor: scale to fit A4 landscape */
+    .floor {
+      grid-template-columns: 380px 95px 380px !important;
+      gap: 8px !important;
+      max-width: 100% !important;
+    }
+
+    /* Festival zone */
+    .festival { padding: 10px !important; border-width: 2px !important; }
+    .festival-title { font-size: 14px !important; padding: 4px !important; margin-bottom: 6px !important; }
+    .u-grid {
+      grid-template-rows: 78px 78px 78px 78px !important;
+      gap: 5px !important;
+    }
+    .booth { padding: 4px !important; border-radius: 8px !important; }
+    .booth .icon { font-size: 18px !important; margin-bottom: 1px !important; }
+    .booth .team { font-size: 9px !important; padding: 1px 6px !important; margin-bottom: 2px !important; }
+    .booth .name { font-size: 11px !important; line-height: 1.2 !important; }
+    .walkway { font-size: 10px !important; }
+    .walkway .star { font-size: 14px !important; }
+
+    /* Center desk */
+    .desk { padding: 6px !important; }
+    .desk .desk-label { font-size: 10px !important; }
+    .desk .entrance-mini { font-size: 9px !important; padding: 2px 5px !important; margin-top: 4px !important; }
+
+    /* Right rooms */
+    .right {
+      grid-template-columns: 1fr 1fr 90px !important;
+      grid-template-rows: 22px 95px 18px 95px 50px !important;
+      gap: 5px !important;
+      padding: 8px !important;
+    }
+    .right-header { font-size: 12px !important; padding: 2px !important; }
+    .room { padding: 5px !important; border-radius: 8px !important; }
+    .room .icon { font-size: 16px !important; margin-bottom: 1px !important; }
+    .room .nm { font-size: 11px !important; letter-spacing: 0 !important; }
+    .room .sub { font-size: 9px !important; margin-top: 1px !important; }
+    .room .team-tag { font-size: 9px !important; padding: 1px 6px !important; }
+    .corridor { font-size: 9px !important; letter-spacing: 2px !important; }
+
+    .r-secret .nm { font-size: 13px !important; letter-spacing: 1px !important; }
+    .r-secret .icon { font-size: 18px !important; }
+
+    .r-lounge .nm { font-size: 12px !important; }
+    .r-lounge .icon { font-size: 18px !important; }
+    .lounge-event {
+      padding: 4px !important;
+      margin-top: 3px !important;
+      font-size: 8.5px !important;
+      line-height: 1.3 !important;
+    }
+    .lounge-event b { font-size: 10px !important; margin: 1px 0 !important; letter-spacing: 0 !important; }
+    .lounge-event .event-sub { font-size: 8px !important; margin-top: 1px !important; }
+    .lounge-special {
+      padding: 3px !important;
+      margin-top: 3px !important;
+      font-size: 8.5px !important;
+      line-height: 1.2 !important;
+    }
+    .lounge-special .star { font-size: 11px !important; }
+
+    .flyer-footer { margin-top: 6px !important; font-size: 11px !important; letter-spacing: 5px !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== Flyer Header ===== -->
+<div class="flyer-header">
+  <div class="deco-line">✦ ✿ ✦ ✿ ✦ ✿ ✦ ✿ ✦ ✿ ✦ ✿ ✦</div>
+  <h1>🎪 OFFICE FESTIVAL 🎪</h1>
+  <div class="ko-title">오피스 축제 부스 안내</div>
+  <div class="tagline">즐거운 시간 보내세요!</div>
+  <div class="deco-line">✦ ✿ ✦ ✿ ✦ ✿ ✦ ✿ ✦ ✿ ✦ ✿ ✦</div>
+</div>
+
+<!-- ===== Floor Plan ===== -->
+<div class="floor">
+
+  <!-- LEFT: Festival main zone -->
+  <div class="festival">
+    <div class="festival-title">🎊 판타지 + 로맨스 · 메인 부스존 🎊</div>
+    <div class="u-grid">
+      <div class="booth b-pd">
+        <div class="icon">🍡</div>
+        <div class="team">PD팀</div>
+        <div class="name">BACK TO 2000<br>추억의 미니게임</div>
+      </div>
+      <div class="booth b-color">
+        <div class="icon">🎭</div>
+        <div class="team">컬러팀</div>
+        <div class="name">캐릭터 맞추기 퀴즈</div>
+      </div>
+
+      <div class="booth b-draw1">
+        <div class="icon">🎨</div>
+        <div class="team">작화팀</div>
+        <div class="name">페이스페인팅</div>
+      </div>
+      <div class="walkway">
+        <div class="star">✨</div>
+        <div>FESTIVAL</div>
+        <div>ZONE</div>
+        <div class="star">✨</div>
+      </div>
+
+      <div class="booth b-draw2">
+        <div class="icon">✋</div>
+        <div class="team">작화팀</div>
+        <div class="name">금손 대전</div>
+      </div>
+
+      <div class="booth b-ai1">
+        <div class="icon">💅</div>
+        <div class="team">배경AI팀</div>
+        <div class="name">온리 원<br>핑거 네일</div>
+      </div>
+      <div class="booth b-ai2">
+        <div class="icon">🎁</div>
+        <div class="team">배경AI팀</div>
+        <div class="name">탕진잼!<br>도파민시장</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: Desk area + entrance -->
+  <div class="desk">
+    <div class="desk-label">사무실 책상</div>
+    <div class="entrance-mini">🚪 출입구</div>
+  </div>
+
+  <!-- RIGHT: Other rooms -->
+  <div class="right">
+    <div class="right-header">🌟 다른 공간 🌟</div>
+
+    <div class="room r-secret">
+      <div class="icon">🔐</div>
+      <div class="nm">스릴러 &amp; 비밀의 방</div>
+      <span class="team-tag">운영팀</span>
+      <div class="sub">방탈출</div>
+    </div>
+
+    <div class="corridor">· · · 복도 · · ·</div>
+
+    <div class="room r-action">
+      <div class="icon">📸 🍾</div>
+      <div class="nm">액션</div>
+      <span class="team-tag">스디R&amp;D팀</span>
+      <div class="sub">최애와 인생네컷 · 한 끗 차이! 병뚜껑 치기</div>
+    </div>
+
+    <div class="room r-storage1">
+      <div class="nm" style="font-size:13px;">📦 창고1</div>
+    </div>
+
+    <div class="room r-lounge">
+      <div class="icon">🛋️</div>
+      <div class="nm">라운지</div>
+      <div class="lounge-event">
+        💝 SPECIAL EVENT 💝<br>
+        <b>"인사매점"</b><br>
+        <span class="event-sub">코인 못 벌은<br>당신을 위한<br>깜짝 이벤트!</span>
+      </div>
+      <div class="lounge-special">
+        <span class="star">⭐</span>
+        휴식 시<br>도장 3개 이상<br>입장 가능
+        <span class="star">⭐</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Flyer Footer ===== -->
+<div class="flyer-footer">✦ ✿ ✦ ✿ ✦ ✿ ✦ ✿ ✦ ✿ ✦ ✿ ✦</div>
+
+</body>
+</html>

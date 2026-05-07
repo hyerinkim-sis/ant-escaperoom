@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>🎉 2026 ANT 오피스 페스티벌 🎉</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+    background: #1a0033;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .slides {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4vh 6vw;
+    overflow: hidden;
+    color: #fff;
+  }
+
+  .slide.active {
+    display: flex;
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* ----- Backgrounds ----- */
+  .bg-0 { background: linear-gradient(135deg, #ff006e 0%, #fb5607 25%, #ffbe0b 50%, #8338ec 75%, #3a86ff 100%); }
+  .bg-1 { background: linear-gradient(135deg, #ffafcc 0%, #cdb4db 50%, #a2d2ff 100%); }
+  .bg-2 { background: linear-gradient(135deg, #f72585 0%, #b5179e 50%, #7209b7 100%); }
+  .bg-3 { background: linear-gradient(135deg, #4cc9f0 0%, #4361ee 50%, #3a0ca3 100%); }
+  .bg-4 { background: linear-gradient(135deg, #ff9e00 0%, #ff006e 100%); }
+  .bg-5 { background: linear-gradient(135deg, #06ffa5 0%, #0fa3b1 50%, #1d3557 100%); }
+  .bg-6 { background: linear-gradient(135deg, #ffd60a 0%, #ff006e 50%, #7209b7 100%); }
+  .bg-7 { background: linear-gradient(135deg, #f15bb5 0%, #fee440 100%); }
+  .bg-8 { background: linear-gradient(135deg, #06d6a0 0%, #f9c74f 50%, #f8961e 100%); }
+  .bg-9 { background: linear-gradient(135deg, #00bbf9 0%, #9b5de5 100%); }
+  .bg-10 { background: linear-gradient(135deg, #390099 0%, #9e0059 50%, #ff0054 100%); }
+  .bg-11 { background: linear-gradient(135deg, #d00000 0%, #ffba08 100%); }
+
+  /* ----- QR / Participant Guide ----- */
+  .qr-layout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2.5rem;
+    align-items: center;
+    width: min(1100px, 92vw);
+  }
+  .qr-box {
+    background: #fff;
+    padding: 1.2rem;
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .qr-box img { display: block; width: 280px; height: 280px; }
+  .qr-box .qr-label {
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    color: #2d1b4e;
+    font-weight: 700;
+  }
+  .qr-box .qr-url {
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    color: #666;
+    word-break: break-all;
+  }
+  .step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255,255,255,0.95);
+    color: #2d1b4e;
+    border-radius: 14px;
+    padding: 0.9rem 1.2rem;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  }
+  .step-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff006e, #b5179e);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.1rem;
+  }
+  .step-text { font-size: 1.05rem; line-height: 1.5; }
+  .step-text strong { color: #ff006e; }
+
+  /* ----- Audio Slide ----- */
+  .audio-card {
+    background: rgba(255,255,255,0.97);
+    color: #2d1b4e;
+    border-radius: 28px;
+    padding: 2.5rem 3rem;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+    max-width: 700px;
+  }
+  .audio-card .icon-big {
+    font-size: 5rem;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .audio-card h3 {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: 1.8rem;
+    margin: 1rem 0;
+    letter-spacing: -0.02em;
+  }
+  .audio-card audio {
+    width: 100%;
+    margin: 1rem 0;
+  }
+  .audio-card .signal-msg {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-top: 1rem;
+  }
+  .audio-card .highlight-box {
+    background: linear-gradient(135deg, #ffd60a, #ff006e);
+    color: #fff;
+    padding: 1rem 1.5rem;
+    border-radius: 14px;
+    margin-top: 1.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  /* ----- Backup mission ----- */
+  .mission-card {
+    background: rgba(255,255,255,0.97);
+    color: #2d1b4e;
+    border-radius: 28px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    max-width: 900px;
+    width: 92vw;
+  }
+  .mission-card .lead {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+  }
+  .mission-card .lead strong { color: #ff006e; }
+  .mission-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .mission-block {
+    background: linear-gradient(135deg, #ffe9d6, #ffd6a5);
+    border-radius: 16px;
+    padding: 1.2rem;
+    text-align: center;
+  }
+  .mission-block .e { font-size: 2.5rem; }
+  .mission-block .t { font-weight: 900; margin-top: 0.4rem; font-size: 1.1rem; }
+  .mission-block .d { font-size: 0.95rem; opacity: 0.75; margin-top: 0.3rem; }
+
+  /* ----- Title ----- */
+  .title-main {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 6.5vw, 5.5rem);
+    line-height: 1.15;
+    text-align: center;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 0 rgba(0,0,0,0.15), 0 10px 25px rgba(0,0,0,0.25);
+    animation: bounce 2.4s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .subtitle {
+    font-size: clamp(1.2rem, 2.4vw, 2rem);
+    margin-top: 1rem;
+    opacity: 0.95;
+    text-align: center;
+    color: #fff;
+  }
+  .date-badge {
+    margin-top: 2rem;
+    padding: 0.8rem 2rem;
+    background: rgba(255,255,255,0.25);
+    border: 3px dashed #fff;
+    border-radius: 999px;
+    font-size: clamp(1rem, 1.8vw, 1.5rem);
+    backdrop-filter: blur(8px);
+    color: #fff;
+  }
+
+  /* ----- Confetti ----- */
+  .confetti {
+    position: absolute;
+    width: 12px; height: 12px;
+    opacity: 0.9;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-10vh) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(720deg); }
+  }
+
+  /* ----- Headings ----- */
+  h2.section {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    font-size: clamp(1.8rem, 3.6vw, 3rem);
+    text-align: center;
+    margin-bottom: 1.8rem;
+    text-shadow: 0 3px 0 rgba(0,0,0,0.15);
+  }
+
+  /* ----- Cards / Boxes ----- */
+  .card {
+    background: rgba(255,255,255,0.95);
+    color: #2d1b4e;
+    border-radius: 24px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    max-width: 90vw;
+  }
+
+  .info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: stretch;
+    margin-top: 1rem;
+  }
+
+  .info-block {
+    background: rgba(255,255,255,0.9);
+    color: #2d1b4e;
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    min-width: 240px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+  .info-block .icon { font-size: 3rem; margin-bottom: 0.5rem; }
+  .info-block .key { font-size: 1.1rem; opacity: 0.7; margin-bottom: 0.3rem; }
+  .info-block .val { font-size: 1.5rem; font-weight: 700; }
+
+  /* ----- Schedule ----- */
+  .schedule {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: min(900px, 90vw);
+    margin-top: 1rem;
+  }
+  .sched-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    align-items: center;
+    background: rgba(255,255,255,0.95);
+    color: #2d1b4e;
+    border-radius: 18px;
+    padding: 1.2rem 1.8rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+  }
+  .sched-item:hover { transform: translateX(8px); }
+  .sched-time {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: 1.25rem;
+    color: #ff006e;
+    letter-spacing: -0.02em;
+  }
+  .sched-content .name { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .sched-content .desc { font-size: 1rem; opacity: 0.75; }
+
+  /* ----- Tournament Bracket ----- */
+  .bracket-wrap {
+    width: min(1280px, 95vw);
+    background: rgba(255,255,255,0.97);
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    color: #2d1b4e;
+  }
+  .bracket-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 6px;
+    font-size: 0.95rem;
+  }
+  .bracket-table th {
+    padding: 0.8rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .bracket-table th .game-emoji { font-size: 1.3rem; display:block; margin-bottom: 4px; }
+  .bracket-table th .game-type { font-size: 0.8rem; opacity: 0.75; font-weight: 400; display: block; margin-top: 4px; }
+  .bracket-table td {
+    padding: 0.7rem 0.5rem;
+    text-align: center;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .col-a { background: #e8e3ff; color: #5b3eb8; }
+  .col-b { background: #ffe1ec; color: #b5179e; }
+  .col-c { background: #d9f5ec; color: #1b9aaa; }
+  .col-d { background: #ffe9d6; color: #d4691f; }
+  .round-cell {
+    background: linear-gradient(135deg, #ffd60a, #ffbe0b);
+    color: #1a0033;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: 1.15rem;
+    width: 60px;
+    letter-spacing: 0.02em;
+  }
+  .row-a td { background: #f3f0ff; }
+  .row-b td { background: #fff0f5; }
+  .row-c td { background: #ecfaf4; }
+  .row-d td { background: #fff5e9; }
+  .row-e td { background: #f3f0ff; }
+  .row-f td { background: #fff0f5; }
+
+  /* ----- Coin Allocation ----- */
+  .coin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    width: min(1100px, 92vw);
+    margin-top: 1.5rem;
+  }
+  .coin-card {
+    background: rgba(255,255,255,0.95);
+    color: #2d1b4e;
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
+  }
+  .coin-card:hover { transform: translateY(-6px); }
+  .coin-card .rank {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: 1.7rem;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
+  }
+  .coin-card .total {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: 2.8rem;
+    color: #ff006e;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .coin-card .unit { font-size: 1.4rem; color: #ff006e; }
+  .coin-card .breakdown {
+    margin-top: 0.7rem;
+    font-size: 0.95rem;
+    opacity: 0.7;
+  }
+  .coin-card.gold { background: linear-gradient(135deg, #fff8d4, #ffd60a); }
+  .coin-card.gold .total, .coin-card.gold .unit { color: #b8860b; }
+  .coin-card.silver { background: linear-gradient(135deg, #f5f5f5, #c0c0c0); }
+  .coin-card.silver .total, .coin-card.silver .unit { color: #555; }
+  .coin-card.bronze { background: linear-gradient(135deg, #ffe5d4, #cd7f32); }
+  .coin-card.bronze .total, .coin-card.bronze .unit { color: #6b3410; }
+
+  .coin-note {
+    margin-top: 1.2rem;
+    font-size: 1.1rem;
+    background: rgba(0,0,0,0.3);
+    padding: 0.8rem 1.5rem;
+    border-radius: 999px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* ----- Awards ----- */
+  .award-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    width: min(1100px, 92vw);
+    margin-top: 1rem;
+  }
+  .award-section {
+    background: rgba(255,255,255,0.95);
+    color: #2d1b4e;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  }
+  .award-section h3 {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    color: #b5179e;
+    letter-spacing: -0.02em;
+  }
+  .award-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 2px dotted #ddd;
+  }
+  .award-item:last-child { border-bottom: none; }
+  .award-icon { font-size: 2.2rem; }
+  .award-info .name { font-size: 1.2rem; font-weight: 700; }
+  .award-info .desc { font-size: 0.95rem; opacity: 0.7; }
+  .award-prize {
+    margin-left: auto;
+    background: #ffbe0b;
+    color: #2d1b4e;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  /* ----- Game Flow ----- */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  .flow-step {
+    background: rgba(255,255,255,0.95);
+    color: #2d1b4e;
+    border-radius: 20px;
+    padding: 1.2rem 1.5rem;
+    min-width: 180px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+  .flow-step .e { font-size: 2.5rem; }
+  .flow-step .t { font-size: 1.1rem; font-weight: 700; margin-top: 0.3rem; }
+  .flow-arrow { font-size: 2.5rem; color: #fff; }
+
+  /* ----- Final ----- */
+  .final-wrap { text-align: center; }
+  .final-wrap h1 {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 7vw, 6rem);
+    letter-spacing: -0.03em;
+    text-shadow: 0 5px 0 rgba(0,0,0,0.18);
+    animation: wiggle 1.5s ease-in-out infinite;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+  }
+
+  /* ----- Nav ----- */
+  .nav {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+  }
+  .nav button {
+    width: 52px; height: 52px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.95);
+    color: #2d1b4e;
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    transition: transform 0.15s;
+  }
+  .nav button:hover { transform: scale(1.1); }
+  .nav button:active { transform: scale(0.95); }
+
+  .counter {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+  }
+
+  .hint {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    opacity: 0.7;
+  }
+
+  /* Floating decoration emojis */
+  .deco {
+    position: absolute;
+    font-size: 4rem;
+    opacity: 0.4;
+    animation: float 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(15deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="counter"><span id="cur">1</span> / <span id="total">11</span></div>
+<div class="hint">← → 키 또는 버튼으로 넘기기</div>
+
+<div class="slides" id="slides">
+
+  <!-- Slide 1: Title -->
+  <section class="slide active bg-0">
+    <div class="deco" style="top:10%; left:8%;">🎈</div>
+    <div class="deco" style="top:20%; right:12%; animation-delay:0.5s;">🎊</div>
+    <div class="deco" style="bottom:15%; left:15%; animation-delay:1s;">🎉</div>
+    <div class="deco" style="bottom:20%; right:10%; animation-delay:1.5s;">✨</div>
+    <div class="deco" style="top:50%; left:5%; animation-delay:2s;">🎀</div>
+    <div class="deco" style="top:45%; right:6%; animation-delay:0.8s;">🍭</div>
+
+    <h1 class="title-main">🎉 2026 ANT<br>오피스 페스티벌 🎉</h1>
+    <p class="subtitle">미니게임 챌린지 × 팝업 부스 × 시상식</p>
+    <div class="date-badge">📅 2026.05.07 (목) | 14:00 ~ 18:00</div>
+  </section>
+
+  <!-- Slide 2: Program Schedule -->
+  <section class="slide bg-1">
+    <h2 class="section">⏰ 오늘의 프로그램</h2>
+    <div class="schedule">
+      <div class="sched-item">
+        <div class="sched-time">14:00 ~ 15:30</div>
+        <div class="sched-content">
+          <div class="name">🎮 미니게임 챌린지</div>
+          <div class="desc">팀별 4개 스테이션 도전 → 순위에 따라 코인 차등 지급!</div>
+        </div>
+      </div>
+      <div class="sched-item">
+        <div class="sched-time">15:30 ~ 16:00</div>
+        <div class="sched-content">
+          <div class="name">☕ 브레이크 타임</div>
+          <div class="desc">코인 지급 및 부스 준비 시간</div>
+        </div>
+      </div>
+      <div class="sched-item">
+        <div class="sched-time">16:00 ~ 17:30</div>
+        <div class="sched-content">
+          <div class="name">🎪 ANT 팝업</div>
+          <div class="desc">팀별 팝업 부스 운영 + 코인으로 부스 이용 (개인 플리마켓도 가능!)</div>
+        </div>
+      </div>
+      <div class="sched-item">
+        <div class="sched-time">17:30 ~ 18:00</div>
+        <div class="sched-content">
+          <div class="name">🏆 시상식</div>
+          <div class="desc">팀 시상 & 개인 시상</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3: Tournament Bracket -->
+  <section class="slide bg-3">
+    <h2 class="section">📋 미니게임 챌린지 대진표</h2>
+    <div class="bracket-wrap">
+      <table class="bracket-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="col-a">
+              <span class="game-emoji">🎨</span>
+              릴레이 그림 맞추기
+              <span class="game-type">기록형 · 액션</span>
+            </th>
+            <th class="col-b">
+              <span class="game-emoji">📚</span>
+              나무위키 게임
+              <span class="game-type">기록형 · 스릴러</span>
+            </th>
+            <th class="col-c">
+              <span class="game-emoji">👥</span>
+              사람많 게임
+              <span class="game-type">대전형 · 라운지</span>
+            </th>
+            <th class="col-d">
+              <span class="game-emoji">📄</span>
+              종이 뒤집기
+              <span class="game-type">대전형 · 로맨스판타지</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-a">
+            <td class="round-cell">1R</td>
+            <td>컬러팀</td>
+            <td>스디R&D팀</td>
+            <td>PD팀 vs 배경AI팀</td>
+            <td>작화팀 vs 운영팀</td>
+          </tr>
+          <tr class="row-b">
+            <td class="round-cell">2R</td>
+            <td>배경AI팀</td>
+            <td>작화팀</td>
+            <td>운영팀 vs 컬러팀</td>
+            <td>스디R&D팀 vs PD팀</td>
+          </tr>
+          <tr class="row-c">
+            <td class="round-cell">3R</td>
+            <td>운영팀</td>
+            <td>PD팀</td>
+            <td>배경AI팀 vs 스디R&D팀</td>
+            <td>컬러팀 vs 작화팀</td>
+          </tr>
+          <tr class="row-d">
+            <td class="round-cell">4R</td>
+            <td>스디R&D팀</td>
+            <td>컬러팀</td>
+            <td>작화팀 vs PD팀</td>
+            <td>운영팀 vs 배경AI팀</td>
+          </tr>
+          <tr class="row-e">
+            <td class="round-cell">5R</td>
+            <td>작화팀</td>
+            <td>배경AI팀</td>
+            <td>스디R&D팀 vs 운영팀</td>
+            <td>PD팀 vs 컬러팀</td>
+          </tr>
+          <tr class="row-f">
+            <td class="round-cell">6R</td>
+            <td>PD팀</td>
+            <td>운영팀</td>
+            <td>컬러팀 vs 작화팀</td>
+            <td>배경AI팀 vs 스디R&D팀</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Slide 4: Initial Coin Allocation -->
+  <section class="slide bg-6">
+    <h2 class="section">🪙 초기 자금 (미니게임 결과)</h2>
+    <p style="font-size: 1.2rem; opacity: 0.95; text-align:center;">
+      기본 <strong>5코인</strong>씩, 등수에 따라 보너스 지급!
+    </p>
+    <div class="coin-grid">
+      <div class="coin-card gold">
+        <div class="rank">🥇 1등 팀</div>
+        <div><span class="total">20</span><span class="unit">코인</span></div>
+        <div class="breakdown">기본 5 + 보너스 15</div>
+      </div>
+      <div class="coin-card silver">
+        <div class="rank">🥈 2등 팀</div>
+        <div><span class="total">15</span><span class="unit">코인</span></div>
+        <div class="breakdown">기본 5 + 보너스 10</div>
+      </div>
+      <div class="coin-card bronze">
+        <div class="rank">🥉 3등 팀</div>
+        <div><span class="total">10</span><span class="unit">코인</span></div>
+        <div class="breakdown">기본 5 + 보너스 5</div>
+      </div>
+      <div class="coin-card">
+        <div class="rank">4등 팀</div>
+        <div><span class="total">8</span><span class="unit">코인</span></div>
+        <div class="breakdown">기본 5 + 보너스 3</div>
+      </div>
+      <div class="coin-card">
+        <div class="rank">5등 팀</div>
+        <div><span class="total">6</span><span class="unit">코인</span></div>
+        <div class="breakdown">기본 5 + 보너스 1</div>
+      </div>
+      <div class="coin-card">
+        <div class="rank">6등 팀</div>
+        <div><span class="total">5</span><span class="unit">코인</span></div>
+        <div class="breakdown">기본 5</div>
+      </div>
+    </div>
+    <div class="coin-note">
+      💡 코인은 <strong>각 개인별로 지급</strong>되며, 팝업 부스 이용에 사용됩니다!
+    </div>
+  </section>
+
+  <!-- Slide 5: HR Shop Backup Mission -->
+  <section class="slide bg-8">
+    <h2 class="section">🛒 인사매점 OPEN!</h2>
+    <div class="mission-card">
+      <p class="lead">
+        미니게임 챌린지 <strong>하위권 팀</strong>도 걱정 NO! 🙆‍♀️<br>
+        <strong>16:00부터 15분간</strong> 인사매점에서 <strong>코인 추가 획득</strong> 가능!
+      </p>
+      <div class="mission-row">
+        <div class="mission-block">
+          <div class="e">⏰</div>
+          <div class="t">운영 시간</div>
+          <div class="d">16:00 ~ 16:15<br>(15분간)</div>
+        </div>
+        <div class="mission-block">
+          <div class="e">📍</div>
+          <div class="t">위치</div>
+          <div class="d">라운지</div>
+        </div>
+        <div class="mission-block">
+          <div class="e">🎯</div>
+          <div class="t">참여 방법</div>
+          <div class="d">미션 수행 →<br>코인 즉시 지급!</div>
+        </div>
+      </div>
+      <div style="margin-top: 1.3rem; padding: 1rem 1.3rem; background: linear-gradient(135deg, #ff006e, #d00000); color:#fff; border-radius: 14px; text-align:center; font-size: 1.15rem; font-weight: 700;">
+        ⚠️ 단, 미션 <strong style="color:#ffd60a;">실패</strong> 시 <strong style="color:#ffd60a;">벌칙</strong>이 기다리고 있어요... 😱
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Game Flow -->
+  <section class="slide bg-5">
+    <h2 class="section">🎮 어떻게 즐기나요?</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="e">🎯</div>
+        <div class="t">미니게임 도전</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="e">🪙</div>
+        <div class="t">코인 획득</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="e">🎪</div>
+        <div class="t">부스 이용</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="e">🔖</div>
+        <div class="t">도장 모으기</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="e">🏆</div>
+        <div class="t">시상!</div>
+      </div>
+    </div>
+    <p style="margin-top: 2rem; font-size: 1.3rem; text-align: center; opacity: 0.95;">
+      게임으로 모은 코인으로 부스 즐기고, 도장 많이 모은 사람이 1등! 💪
+    </p>
+    <div style="margin-top: 1.5rem; padding: 1rem 1.5rem; background: rgba(255,255,255,0.95); color:#2d1b4e; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); max-width: 700px; text-align:center;">
+      <span style="font-size:1.6rem;">🛋️</span>
+      <strong style="font-size:1.1rem;">라운지 휴식 가능!</strong>
+      <span style="font-size:1.05rem;"> — 단, <strong style="color:#ff006e;">도장 3개 이상</strong> 모아야 입장 가능 🔖</span>
+    </div>
+  </section>
+
+  <!-- Slide 7: QR + Participant Guide -->
+  <section class="slide bg-9">
+    <h2 class="section">📱 코인 사용은 여기서!</h2>
+    <div class="qr-layout">
+      <div class="qr-box">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=10&data=https%3A%2F%2Fhyerinkim-sis.github.io%2Fant-festival-app-final%2F" alt="ANT Festival App QR">
+        <div class="qr-label">📲 QR 스캔 후 접속!</div>
+        <div class="qr-url">hyerinkim-sis.github.io/ant-festival-app-final</div>
+      </div>
+      <div class="step-list">
+        <div style="font-size:1.3rem; font-weight:900; margin-bottom:0.3rem;">👤 참가자 이용 가이드</div>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>참가자 입장</strong> 버튼 클릭</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">스크롤해서 <strong>본인 이름</strong> 클릭</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text"><strong>부스 결제</strong> 메뉴 진입</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">이용할 <strong>부스 선택</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-text">부스 담당자가 <strong>PIN 입력</strong> → 결제 완료! 🎉</div>
+        </div>
+        <div class="step" style="background: linear-gradient(135deg, #00bbf9, #9b5de5); color:#fff;">
+          <div class="step-num" style="background:#fff; color:#9b5de5;">🔖</div>
+          <div class="step-text" style="color:#fff;">앱에서 <strong style="color:#ffd60a;">본인 도장 현황</strong>도 실시간 확인 가능!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: Booth Manager Guide -->
+  <section class="slide bg-10">
+    <h2 class="section">🧑‍💼 부스 담당자 가이드</h2>
+    <div class="qr-layout" style="grid-template-columns: 1fr;">
+      <div class="step-list" style="max-width: 800px; width: 100%;">
+        <div style="font-size:1.3rem; font-weight:900; margin-bottom:0.3rem; color:#fff; text-align:center;">
+          담당자는 같은 앱에서 부스 모드로 진입! 💼
+        </div>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text"><strong>부스 담당자</strong> 버튼 클릭</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>PIN 입력</strong>으로 로그인</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">우리 부스의 <strong>실시간 현황</strong>을 한눈에 확인 📊</div>
+        </div>
+        <div class="step" style="background: linear-gradient(135deg, #ffd60a, #ff006e); color:#fff;">
+          <div class="step-num" style="background:#fff; color:#ff006e;">💡</div>
+          <div class="step-text" style="color:#fff;">실시간 현황으로 <strong style="color:#fff;">매출왕 / 인기상</strong> 경쟁 상황 체크!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Cleanup Signal -->
+  <section class="slide bg-11">
+    <div class="deco" style="top:15%; left:10%;">📢</div>
+    <div class="deco" style="top:25%; right:15%; animation-delay:0.5s;">🔔</div>
+    <div class="deco" style="bottom:20%; left:18%; animation-delay:1s;">⚠️</div>
+    <div class="deco" style="bottom:25%; right:12%; animation-delay:1.5s;">📣</div>
+    <h2 class="section">🔔 정리 신호 안내</h2>
+    <div class="audio-card">
+      <div class="icon-big">📢</div>
+      <h3>이 소리가 들리면!</h3>
+      <audio controls>
+        <source src="festival_signal.mp3" type="audio/mpeg">
+        브라우저가 오디오를 지원하지 않습니다.
+      </audio>
+      <p class="signal-msg">
+        ▶️ 재생 버튼을 눌러 미리 들어보세요
+      </p>
+      <div class="highlight-box">
+        🏃‍♀️ 정리하고 사무실로 모두 모여주세요!
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10: Awards -->
+  <section class="slide bg-4">
+    <h2 class="section">🏆 시상 안내</h2>
+    <div class="award-grid">
+      <div class="award-section">
+        <h3>👥 팀 시상</h3>
+        <div class="award-item">
+          <div class="award-icon">🏆</div>
+          <div class="award-info">
+            <div class="name">매출왕</div>
+            <div class="desc">"돈 버는 게 제일 쉬웠어요" 매출 1위 부스</div>
+          </div>
+          <div class="award-prize">20만원</div>
+        </div>
+        <div class="award-item">
+          <div class="award-icon">🔥</div>
+          <div class="award-info">
+            <div class="name">인기상</div>
+            <div class="desc">발길이 끊이지 않은 인기 1위 부스</div>
+          </div>
+          <div class="award-prize">20만원</div>
+        </div>
+        <p style="margin-top:1rem; font-size:0.9rem; opacity:0.7;">
+          ※ 중복 시상 불가 — 한 팀 싹쓸이 시 차순위 팀에게 양보
+        </p>
+      </div>
+      <div class="award-section">
+        <h3>🙋 개인 시상</h3>
+        <p style="margin-bottom:1rem; opacity:0.75;">부스 도장 수 기준 (복지포인트 지급)</p>
+        <div class="award-item">
+          <div class="award-icon">🥇</div>
+          <div class="award-info">
+            <div class="name">1위</div>
+            <div class="desc">도장 최다 보유자</div>
+          </div>
+          <div class="award-prize">10만원</div>
+        </div>
+        <div class="award-item">
+          <div class="award-icon">🥈</div>
+          <div class="award-info">
+            <div class="name">2위</div>
+            <div class="desc">두 번째로 많은 도장</div>
+          </div>
+          <div class="award-prize">7만원</div>
+        </div>
+        <div class="award-item">
+          <div class="award-icon">🥉</div>
+          <div class="award-info">
+            <div class="name">3위</div>
+            <div class="desc">세 번째로 많은 도장</div>
+          </div>
+          <div class="award-prize">5만원</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11: Final -->
+  <section class="slide bg-7">
+    <div class="deco" style="top:15%; left:10%;">🎊</div>
+    <div class="deco" style="top:25%; right:15%; animation-delay:0.5s;">🎉</div>
+    <div class="deco" style="bottom:20%; left:18%; animation-delay:1s;">✨</div>
+    <div class="deco" style="bottom:25%; right:12%; animation-delay:1.5s;">🎈</div>
+    <div class="final-wrap">
+      <h1>씬나게 즐겨봅시다!</h1>
+      <p style="font-size: clamp(1.3rem, 2.5vw, 2rem); margin-top: 2rem; color:#2d1b4e;">
+        🎈 Let's GO ANT Festival! 🎈
+      </p>
+      <p style="font-size: 1.1rem; margin-top: 2rem; color:#4d194d;">
+        문의사항은 인사팀으로 DM 주세요 💌
+      </p>
+    </div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button onclick="prev()">←</button>
+  <button onclick="next()">→</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  document.getElementById('total').textContent = total;
+  let cur = 0;
+
+  function show(i) {
+    slides.forEach(s => s.classList.remove('active'));
+    cur = (i + total) % total;
+    slides[cur].classList.add('active');
+    document.getElementById('cur').textContent = cur + 1;
+    spawnConfetti();
+  }
+  function next() { show(cur + 1); }
+  function prev() { show(cur - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') next();
+    if (e.key === 'ArrowLeft') prev();
+  });
+
+  // Confetti effect on slide change
+  function spawnConfetti() {
+    const colors = ['#ff006e', '#ffbe0b', '#fb5607', '#8338ec', '#3a86ff', '#06ffa5', '#f72585'];
+    const slide = slides[cur];
+    for (let i = 0; i < 18; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + '%';
+      c.style.top = '-5vh';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      c.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+      c.style.animationDelay = (Math.random() * 0.5) + 's';
+      slide.appendChild(c);
+      setTimeout(() => c.remove(), 4500);
+    }
+  }
+  spawnConfetti();
+</script>
+
+</body>
+</html>
